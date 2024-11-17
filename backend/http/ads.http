@@ -1,0 +1,43 @@
+###fetch all ads
+
+GET http://localhost:3000/ads
+
+###
+
+GET http://localhost:3000/ads/7
+
+###
+
+GET http://localhost:3000/ads?category=aut&tag=exclu
+
+### add new ads - POST
+POST http://localhost:3000/ads
+Content-Type: application/json
+
+{
+
+    "title": "Citroen",
+    "description": "My bike is blue, working fine. I'm selling it because I've got a new one",
+    "owner": "bike.seller@gmail.com",
+    "price": 500,
+    "location": "Nice",
+    "createdAt": "2023-09-05T00:00:00.000Z",
+    "pictures": "https://images.lecho.be/view?iid=dc:113129565&context=ONLINE&ratio=16/9&width=640&u=1508242455000",
+    "category": 5,
+    "tags": [2,3]
+}
+
+###
+DELETE http://localhost:3000/ads/6
+
+###
+PUT http://localhost:3000/ads/8
+Content-Type: application/json
+
+{
+  
+  
+  "tags": [1,4]
+}
+
+

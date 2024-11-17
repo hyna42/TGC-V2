@@ -1,0 +1,24 @@
+GET http://localhost:3000/categories
+
+###
+
+GET http://localhost:3000/categories?name=ph
+
+###
+POST http://localhost:3000/categories
+Content-type: application/json
+
+{
+    "title": "téléphone"
+}
+
+###
+PUT http://localhost:3000/categories/10
+Content-Type: application/json
+
+{
+    "title": "téléphone"
+}
+
+###
+DELETE http://localhost:3000/categories/4
