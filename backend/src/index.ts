@@ -1,5 +1,5 @@
 import express from "express";
-
+import cors from "cors"; // Import de cors
 import "reflect-metadata";
 import { datasource } from "./config/db";
 import { Ad } from "./entities/Ad";
@@ -10,7 +10,16 @@ import { In, Like } from "typeorm";
 
 const app = express();
 const port = 3000;
+// Middleware JSON
 app.use(express.json());
+
+// Middleware CORS
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Frontend local
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
 
 /**ADS */
 //fetch all ads

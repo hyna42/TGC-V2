@@ -1,17 +1,20 @@
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import Header from "./components/Header";
+
 import RecentAds from "./components/RecentAds";
+import LayoutPage from "./pages/LayoutPage";
+import AboutPage from "./pages/AboutPage";
+import AdDetailsPage from "./pages/AdDetailsPage";
 
 function App() {
-  // const [count, setCount] = useState(0)
-
   return (
-    <>
-      <body>
-        <Header/>
-        <RecentAds/>
-      </body>
-    </>
+    <Routes>
+      <Route path="/" element={<LayoutPage />}>
+        <Route index element={<RecentAds />} />
+        <Route path="about" element={<AboutPage />} />
+        <Route path="ad/:id" element={<AdDetailsPage />} />
+      </Route>
+    </Routes>
   );
 }
 

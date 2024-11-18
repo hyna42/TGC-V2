@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import AdCard, { AdCardProps } from "./AdCard";
+import axios from "axios";
 
 const RecentAds = () => {
   const ads: AdCardProps[] = [
@@ -40,19 +42,41 @@ const RecentAds = () => {
     },
   ];
 
+  const [total, setTotal] = useState(0);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/ads");
+        console.log(response.data);
+      } catch (error) {
+        console.log("error fetching ads", error);
+      }
+    };
+    fetchData();
+  }, []);
   return (
     <>
       <main className="main-content">
         <h2>Annonces récentes</h2>
+        <p>Prix total : {total} €</p>
         <section className="recent-ads">
           {ads.map((ad) => (
-            <AdCard
-              key={ad.title}
-              title={ad.title}
-              imgUrl={ad.imgUrl}
-              price={ad.price}
-              link={ad.link}
-            />
+            <div key={ad.title}>
+              <AdCard
+                title={ad.title}
+                imgUrl={ad.imgUrl}
+                price={ad.price}
+                link={ad.link}
+              />
+              <button
+                className="button"
+                onClick={() => {
+                  setTotal(total + ad.price);
+                }}
+              >
+                Add price to total
+              </button>
+            </div>
           ))}
         </section>
       </main>
