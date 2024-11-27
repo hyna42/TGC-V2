@@ -3,6 +3,10 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import AdCard, { AdCardProps } from "./AdCard";
 
+type category = {
+  id: string;
+  title: string;
+};
 const RecentAds = () => {
   // const ads: AdCardProps[] = [
   //   {
@@ -44,20 +48,37 @@ const RecentAds = () => {
   // ];
 
   const [ads, setAds] = useState<AdCardProps[]>([]);
+
+  const [categories, setCategories] = useState<category[]>([]);
+
   const [total, setTotal] = useState(0);
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchAds = async () => {
       try {
         const response = await axios.get<AdCardProps[]>(
           "http://localhost:3000/ads"
         );
         if (response.data) setAds(response.data);
-        console.log(response.data);
+        console.log("ads", response.data);
       } catch (error) {
         console.log("error fetching ads", error);
       }
     };
-    fetchData();
+
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get<category[]>(
+          "http://localhost:3000/categories"
+        );
+        if (response.data) setCategories(response.data);
+        // console.log("categories",categories);
+      } catch (error) {
+        console.log("error fetching categories", error);
+      }
+    };
+    console.log(categories);
+    fetchAds();
+    fetchCategories();
   }, []);
   return (
     <>
