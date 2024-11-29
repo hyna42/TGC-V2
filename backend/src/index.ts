@@ -80,7 +80,9 @@ app.post("/ads", async (req, res) => {
     ad.owner = req.body.owner;
     ad.price = req.body.price;
     ad.title = req.body.title;
-    ad.pictures = req.body.pictures; // Ajout de la propriété `pictures`
+    ad.pictures = Array.isArray(req.body.pictures)
+      ? req.body.pictures
+      : [req.body.pictures];
 
     // Liaison de la catégorie si elle est trouvée
     if (req.body.category) {

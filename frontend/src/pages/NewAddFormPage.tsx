@@ -2,8 +2,8 @@
 
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { AdCardProps } from "../components/AdCard";
+import { SubmitHandler, useForm, useFieldArray } from "react-hook-form";
+import { AdFormProps } from "../components/AdCard";
 
 export type Category = {
   id: number;
@@ -51,22 +51,39 @@ const NewAddFormPage = () => {
   console.log("categories : ", categories);
   console.log("tags : ", tags);
 
-  //gestion du formulaire
-  const { register, handleSubmit } = useForm<AdCardProps>({
+  /************gestion du formulaire****************/
+  const { register, handleSubmit, control } = useForm<AdFormProps>({
     defaultValues: {
       title: "Titre par défaut",
       description: "description",
       owner: "auteur",
       price: 100,
       location: "Paris",
-      pictures:
-        "https://imgs.search.brave.com/lOHbtcdsUNgMT7uRcsOCb4DqSn7PVaoHNkpP3Tk0rHo/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/NDFJa1RWb21pckwu/X0FDLl9TUjE4MCwy/MzAuanBn",
+      // pictures:
+      //   "https://imgs.search.brave.com/lOHbtcdsUNgMT7uRcsOCb4DqSn7PVaoHNkpP3Tk0rHo/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/NDFJa1RWb21pckwu/X0FDLl9TUjE4MCwy/MzAuanBn",
       // tags:
     },
   });
 
-  const onSubmit: SubmitHandler<AdCardProps> = (formData) =>
-    console.log("formData ",formData);
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "pictures", // name of the field array
+  });
+
+  const onSubmit: SubmitHandler<AdFormProps> = async (formData) => {
+    //préparer le payload
+
+    console.log("formData ", formData);
+
+    const dataPayload = {
+      ...formData,
+      createdAt: new Date(formData.createdAt).toISOString(), //Date
+      tags: formData.tags.map(Number), //number[]
+      category: Number(formData.category), //number
+      pictures: formData.pictures, //string[]
+    };
+    console.log("payload ", dataPayload);
+  };
 
   return (
     <>
@@ -88,7 +105,7 @@ const NewAddFormPage = () => {
 
         <div className="form-group">
           <label>Prix</label>
-          <input {...register("price")} className="text-field" />
+          <input {...register("price")} className="text-field" type="number" />
         </div>
 
         <div className="form-group">
@@ -105,9 +122,25 @@ const NewAddFormPage = () => {
           />
         </div>
 
-        <div className="form-group">
+        {/* <div className="form-group">
           <label>Photos</label>
           <input {...register("pictures")} className="text-field" />
+        </div> */}
+
+        <div className="form-group">
+          <button onClick={() => append({ url: "" })} className="text-field button">
+            Ajouter une photo
+          </button>
+          {fields.map((field, index) => (
+            <div key={field.id}>
+              <input
+                type="text"
+                {...register(`pictures.${index}.url`)}
+                className="text-field"
+              />
+              <button onClick={() => remove(index)}>Supprimer une photo</button>
+            </div>
+          ))}
         </div>
 
         <div className="form-group">

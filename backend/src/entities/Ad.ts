@@ -35,8 +35,8 @@ export class Ad extends BaseEntity {
   @Column()
   createdAt: Date;
 
-  @Column()
-  pictures: string;
+  @Column("simple-array")
+  pictures: string[];
 
   @ManyToOne(() => Category, (category) => category.ads, { eager: true })
   category: Category;
