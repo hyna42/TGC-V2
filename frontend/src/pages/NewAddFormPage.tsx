@@ -1,9 +1,10 @@
 // import React from "react";
-
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm, useFieldArray } from "react-hook-form";
-import { AdFormProps } from "../components/AdCard";
+// import { AdFormProps } from "../components/AdCard";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { validate } from "../validation/validate";
 
 export type Category = {
   id: number;
@@ -13,6 +14,18 @@ export type Category = {
 export type Tag = {
   id: number;
   name: string;
+};
+
+export type FormPayload = {
+  title: string;
+  description: string;
+  owner: string;
+  price: number;
+  location: string;
+  createdAt: string; //format ISO
+  pictures: { url: string }[]; // Tableau d'URLs d'images
+  category: number; // ID de la catégorie
+  tags: number[]; // Tableau d'IDs de tags
 };
 
 const NewAddFormPage = () => {
@@ -52,25 +65,33 @@ const NewAddFormPage = () => {
   console.log("tags : ", tags);
 
   /************gestion du formulaire****************/
-  const { register, handleSubmit, control } = useForm<AdFormProps>({
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+    reset,
+  } = useForm<FormPayload>({
     defaultValues: {
       title: "Titre par défaut",
       description: "description",
       owner: "auteur",
-      price: 100,
+      price: 0,
       location: "Paris",
-      // pictures:
-      //   "https://imgs.search.brave.com/lOHbtcdsUNgMT7uRcsOCb4DqSn7PVaoHNkpP3Tk0rHo/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/NDFJa1RWb21pckwu/X0FDLl9TUjE4MCwy/MzAuanBn",
-      // tags:
+      createdAt: "",
+      pictures: [{ url: "" }],
+      category: 0,
+      tags: [],
     },
+    resolver: yupResolver(validate),
   });
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "pictures", // name of the field array
+    name: "pictures",
   });
 
-  const onSubmit: SubmitHandler<AdFormProps> = async (formData) => {
+  const onSubmit: SubmitHandler<FormPayload> = async (formData) => {
     //préparer le payload
 
     console.log("formData ", formData);
@@ -80,9 +101,10 @@ const NewAddFormPage = () => {
       createdAt: new Date(formData.createdAt).toISOString(), //Date
       tags: formData.tags.map(Number), //number[]
       category: Number(formData.category), //number
-      pictures: formData.pictures, //string[]
+      // pictures: formData.pictures, //string[]
     };
     console.log("payload ", dataPayload);
+    reset();
   };
 
   return (
@@ -91,26 +113,41 @@ const NewAddFormPage = () => {
         <div className="form-group">
           <label>Titre</label>
           <input {...register("title")} className="text-field" />
+          {errors.title && (
+            <span className="error-message">{errors.title.message}</span>
+          )}
         </div>
 
         <div className="form-group">
           <label>Description</label>
           <input {...register("description")} className="text-field" />
+          {errors.description && (
+            <span className="error-message">{errors.description.message}</span>
+          )}
         </div>
 
         <div className="form-group">
           <label>Auteur</label>
           <input {...register("owner")} className="text-field" />
+          {errors.owner && (
+            <span className="error-message">{errors.owner.message}</span>
+          )}
         </div>
 
         <div className="form-group">
           <label>Prix</label>
           <input {...register("price")} className="text-field" type="number" />
+          {errors.price && (
+            <span className="error-message">{errors.price.message}</span>
+          )}
         </div>
 
         <div className="form-group">
           <label>Localisation</label>
           <input {...register("location")} className="text-field" />
+          {errors.location && (
+            <span className="error-message">{errors.location.message}</span>
+          )}
         </div>
 
         <div className="form-group">
@@ -120,15 +157,17 @@ const NewAddFormPage = () => {
             className="text-field"
             type="date"
           />
+          {errors.createdAt && (
+            <span className="error-message">{errors.createdAt.message}</span>
+          )}
         </div>
 
-        {/* <div className="form-group">
-          <label>Photos</label>
-          <input {...register("pictures")} className="text-field" />
-        </div> */}
-
         <div className="form-group">
-          <button onClick={() => append({ url: "" })} className="text-field button">
+          <button
+            type="button"
+            onClick={() => append({ url: "" })}
+            className="text-field button"
+          >
             Ajouter une photo
           </button>
           {fields.map((field, index) => (
@@ -138,9 +177,20 @@ const NewAddFormPage = () => {
                 {...register(`pictures.${index}.url`)}
                 className="text-field"
               />
-              <button onClick={() => remove(index)}>Supprimer une photo</button>
+              <button type="button" onClick={() => remove(index)}>
+                Supprimer une photo
+              </button>
+              {/* Affichage des erreurs spécifiques pour ce champ */}
+              {errors.pictures?.[index]?.url && (
+                <span className="error-message">
+                  {errors.pictures[index]?.url?.message}
+                </span>
+              )}
             </div>
           ))}
+          {errors.pictures && (
+            <span className="error-message">{errors.pictures.message}</span>
+          )}
         </div>
 
         <div className="form-group">
@@ -153,6 +203,9 @@ const NewAddFormPage = () => {
               </option>
             ))}
           </select>
+          {errors.category && (
+            <span className="error-message">{errors.category.message}</span>
+          )}
         </div>
 
         <div className="form-group">
@@ -170,6 +223,9 @@ const NewAddFormPage = () => {
               </div>
             ))}
           </div>
+          {errors.tags && (
+            <span className="error-message">{errors.tags.message}</span>
+          )}
         </div>
 
         <input type="submit" className="button" />

@@ -1,24 +1,5 @@
 import { Link } from "react-router-dom";
 
-export type AdFormProps = {
-  id: number;
-  title: string;
-  pictures: { url: string }[]; // tableau d'objets avec `url`
-  price: number;
-  category: {
-    id: number;
-    title: string;
-  };
-  // category: number,
-  // tags: [{ id: number; name: string[] }];
-  tags: number[];
-  createdAt: Date;
-  description: string;
-  location: string;
-  owner: string;
-  // link: string | "#";
-};
-
 export type AdCardProps = {
   id: number;
   title: string;
@@ -30,13 +11,8 @@ export type AdCardProps = {
   };
 };
 
+// export type AdFormPartialProps = Pick<AdFormProps, "title"|"description"|"pictures">;
 
-// Type réduit pour l'affichage
-
-// export type AdCardProps = Pick<
-//   AdFormProps,
-//   "id" | "title" | "pictures" | "price" | "category"
-// >;
 
 const AdCard = ({ title, pictures, price, category, id }: AdCardProps) => {
   return (
