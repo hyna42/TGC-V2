@@ -49,7 +49,7 @@ const RecentAds = () => {
 
   const [ads, setAds] = useState<AdCardProps[]>([]);
 
-  const [categories, setCategories] = useState<category[]>([]);
+  const [_categories, setCategories] = useState<category[]>([]);
 
   const [total, setTotal] = useState(0);
   useEffect(() => {
@@ -76,7 +76,7 @@ const RecentAds = () => {
         console.log("error fetching categories", error);
       }
     };
-    console.log(categories);
+    // console.log(categories);
     fetchAds();
     fetchCategories();
   }, []);

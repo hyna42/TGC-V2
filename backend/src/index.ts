@@ -42,6 +42,9 @@ app.get("/ads", async (req, res) => {
         ...(categoryFilter && { category: categoryFilter }),
         ...(tagFilter && { tags: tagFilter }),
       },
+      order: {
+        id:"DESC"
+      }
     });
 
     // console.log(ads);

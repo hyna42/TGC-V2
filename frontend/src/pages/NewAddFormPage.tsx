@@ -5,6 +5,9 @@ import { SubmitHandler, useForm, useFieldArray } from "react-hook-form";
 // import { AdFormProps } from "../components/AdCard";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { validate } from "../validation/validate";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export type Category = {
   id: number;
@@ -31,6 +34,7 @@ export type FormPayload = {
 const NewAddFormPage = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     //Récupérer les catégories
@@ -61,8 +65,8 @@ const NewAddFormPage = () => {
     fetchTags();
   }, []);
 
-  console.log("categories : ", categories);
-  console.log("tags : ", tags);
+  // console.log("categories : ", categories);
+  // console.log("tags : ", tags);
 
   /************gestion du formulaire****************/
   const {
@@ -70,15 +74,15 @@ const NewAddFormPage = () => {
     handleSubmit,
     control,
     formState: { errors },
-    reset,
+    // reset,
   } = useForm<FormPayload>({
     defaultValues: {
       title: "Titre par défaut",
       description: "description",
       owner: "auteur",
-      price: 0,
+      price: 100,
       location: "Paris",
-      createdAt: "",
+      createdAt: "1992-04-24",
       pictures: [{ url: "" }],
       category: 0,
       tags: [],
@@ -101,10 +105,19 @@ const NewAddFormPage = () => {
       createdAt: new Date(formData.createdAt).toISOString(), //Date
       tags: formData.tags.map(Number), //number[]
       category: Number(formData.category), //number
-      // pictures: formData.pictures, //string[]
+      pictures: formData.pictures.map((picture) => picture.url), //string[]
     };
+
     console.log("payload ", dataPayload);
-    reset();
+    try {
+      await axios.post<FormPayload[]>("http://localhost:3000/ads", dataPayload);
+
+      toast.success("🚀 Votre annonce a été créée avec succès !");
+      navigate("/");
+    } catch (error) {
+      console.error("Error create ad", error);
+      toast.error("Une erreur est survenue lors de la création de l'annonce");
+    }
   };
 
   return (
