@@ -11,9 +11,6 @@ export type AdCardProps = {
   };
 };
 
-// export type AdFormPartialProps = Pick<AdFormProps, "title"|"description"|"pictures">;
-
-
 const AdCard = ({ title, pictures, price, category, id }: AdCardProps) => {
   return (
     <>

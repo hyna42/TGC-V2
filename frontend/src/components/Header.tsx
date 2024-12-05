@@ -1,22 +1,25 @@
 import { Link } from "react-router-dom";
 import Category, { CategoryProps } from "./Category";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const Header = () => {
-  const categories: CategoryProps[] = [
-    { link: "", name: "Ameublement" },
-    { link: "", name: "Électroménager" },
-    { link: "", name: "Photographie" },
-    { link: "", name: "Informatique" },
-    { link: "", name: "Téléphonie" },
-    { link: "", name: "Vélos" },
-    { link: "", name: "Véhicules" },
-    { link: "", name: "Sport" },
-    { link: "", name: "Habillement" },
-    { link: "", name: "Bébé" },
-    { link: "", name: "Outillage" },
-    { link: "", name: "Services" },
-    { link: "", name: "Vacances" },
-  ];
+  const [categories, setCategories] = useState<CategoryProps[]>([]);
+  //récupérer les catéories
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios("http://localhost:3000/categories");
+        setCategories(response.data);
+        // console.log("catégories", response.data);
+      } catch (error) {
+        console.log("Erreur fetching categories", error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
   return (
     <>
       <header className="header">
@@ -24,7 +27,7 @@ const Header = () => {
           <h1>
             <Link to="/" className="button logo link-button">
               <span className="mobile-short-label">TGC</span>
-              <span className="desktop-long-label">THE GOOD CORNER</span>
+              <span className="desktop-long-label">THE GOOD CORNER V2</span>
             </Link>
           </h1>
 
@@ -58,9 +61,9 @@ const Header = () => {
         <nav className="categories-navigation">
           {categories.map((category) => (
             <Category
-              key={category.name}
-              link={category.link}
-              name={category.name}
+              key={category.id}
+              id={category.id}
+              title={category.title}
             />
           ))}
         </nav>

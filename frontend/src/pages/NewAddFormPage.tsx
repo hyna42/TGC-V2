@@ -84,10 +84,10 @@ const NewAddFormPage = () => {
       location: "Paris",
       createdAt: "1992-04-24",
       pictures: [{ url: "" }],
-      category: 0,
       tags: [],
     },
     resolver: yupResolver(validate),
+    mode: "all",
   });
 
   const { fields, append, remove } = useFieldArray({

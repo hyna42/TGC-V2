@@ -59,7 +59,7 @@ const RecentAds = () => {
           "http://localhost:3000/ads"
         );
         if (response.data) setAds(response.data);
-        console.log("ads", response.data);
+        // console.log("ads", response.data);
       } catch (error) {
         console.log("error fetching ads", error);
       }

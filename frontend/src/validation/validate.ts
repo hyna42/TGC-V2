@@ -37,7 +37,7 @@ export const validate = object().shape({
     .typeError("Veuillez sélectionner une catégorie valide"),
 
   tags: array()
-    .of(number().required("Chaque tag doit être un nombre valide"))
+    // .of(number().required("Chaque tag doit être un nombre valide"))
     .min(1, "Vous devez sélectionner au moins un tag")
     .required("Les tags sont obligatoires"),
 });

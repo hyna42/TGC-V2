@@ -1,12 +1,12 @@
 export type CategoryProps = {
-  link: string;
-  name: string;
+  id: number;
+  title: string;
 };
-const Category = ({ link, name }: CategoryProps) => {
+const Category = ({ id, title }: CategoryProps) => {
   return (
     <>
-      <a href={link} className="category-navigation-link">
-        {name}
+      <a href={`/category/${id}`} className="category-navigation-link">
+        {title}
       </a>{" "}
     </>
   );

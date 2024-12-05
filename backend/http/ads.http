@@ -35,8 +35,6 @@ PUT http://localhost:3000/ads/8
 Content-Type: application/json
 
 {
-  
-  
   "tags": [1,4]
 }
 
