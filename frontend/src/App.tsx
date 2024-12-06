@@ -3,10 +3,11 @@ import "./App.css";
 
 import RecentAds from "./components/RecentAds";
 import LayoutPage from "./pages/LayoutPage";
-import AboutPage from "./pages/AboutPage";
+// import AboutPage from "./pages/AboutPage";
 import AdDetailsPage from "./pages/AdDetailsPage";
 import NewAddFormPage from "./pages/NewAddFormPage";
 import { ToastContainer } from "react-toastify";
+import NewCategoryForm from "./pages/NewCategory";
 
 function App() {
   return (
@@ -14,9 +15,13 @@ function App() {
       <Routes>
         <Route path="/" element={<LayoutPage />}>
           <Route index element={<RecentAds />} />
-          <Route path="about" element={<AboutPage />} />
-          <Route path="ad/:id" element={<AdDetailsPage />} />
+          {/* <Route path="about" element={<AboutPage />} /> */}
           <Route path="ad/new" element={<NewAddFormPage />} />
+          <Route path="ad/:id" element={<AdDetailsPage />} />
+
+          <Route path="ad/category" element={<NewCategoryForm />} />
+          
+
         </Route>
       </Routes>
       <ToastContainer theme="colored" />
