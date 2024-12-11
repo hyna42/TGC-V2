@@ -78,7 +78,10 @@ const NewAddFormPage = () => {
   } = useForm<FormPayload>({
     defaultValues: {
       title: "Titre par défaut",
-      description: "description",
+      description: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Non, iusto!
+            Voluptates repudiandae asperiores quia. Blanditiis repellat minima
+            adipisci, aliquam nulla unde quam architecto eligendi, voluptatum,
+            perspiciatis laudantium sed eos voluptates?`,
       owner: "auteur",
       price: 100,
       location: "Paris",

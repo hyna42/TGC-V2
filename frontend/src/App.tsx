@@ -17,11 +17,10 @@ function App() {
           <Route index element={<RecentAds />} />
           {/* <Route path="about" element={<AboutPage />} /> */}
           <Route path="ad/new" element={<NewAddFormPage />} />
-          <Route path="ad/:id" element={<AdDetailsPage />} />
 
           <Route path="ad/category" element={<NewCategoryForm />} />
           
-
+          <Route path="ad/:id" element={<AdDetailsPage />} />
         </Route>
       </Routes>
       <ToastContainer theme="colored" />

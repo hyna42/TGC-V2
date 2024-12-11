@@ -18,7 +18,7 @@ const Header = () => {
       }
     };
     fetchCategories();
-  }, [categories]);
+  }, []);
 
   return (
     <>

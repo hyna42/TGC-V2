@@ -4,7 +4,7 @@ GET http://localhost:3000/ads
 
 ###
 
-GET http://localhost:3000/ads/7
+GET http://localhost:3000/ads/33
 
 ###
 
