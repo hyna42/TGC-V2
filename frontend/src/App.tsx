@@ -23,7 +23,7 @@ function App() {
           <Route path="ad/:id" element={<AdDetailsPage />} />
         </Route>
       </Routes>
-      <ToastContainer theme="colored" />
+      <ToastContainer theme="colored" autoClose={2000}/>
     </>
   );
 }

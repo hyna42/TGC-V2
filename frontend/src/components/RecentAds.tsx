@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 // import AdCard, { AdCardProps } from "./AdCard";
 import axios from "axios";
 import AdCard, { AdCardProps } from "./AdCard";
+import { toast } from "react-toastify";
 
 type category = {
   id: string;
@@ -12,7 +13,7 @@ const RecentAds = () => {
 
   const [_categories, setCategories] = useState<category[]>([]);
 
-  const [total, setTotal] = useState(0);
+  // const [total, setTotal] = useState(0);
   useEffect(() => {
     const fetchAds = async () => {
       try {
@@ -41,11 +42,23 @@ const RecentAds = () => {
     fetchAds();
     fetchCategories();
   }, []);
+  const handleDeleteAd = async (id: number) => {
+    try {
+      await axios.delete(`http://localhost:3000/ads/${id}`);
+      toast.success("🚀 Annonce supprimée avec");
+
+      //mettre à jour la liste de annonces après suppression
+      setAds(ads.filter((ad) => ad.id != id));
+    } catch (error) {
+      console.log("Erreur dans la tentative de suppression de l'annonce");
+      toast.error("❌ Impossible de supprimer l'annonce !");
+    }
+  };
   return (
     <>
       <main className="main-content">
         <h2>Annonces récentes</h2>
-        <p>Prix total : {total} €</p>
+        {/* <p>Prix total : {total} €</p> */}
         <section className="recent-ads">
           {ads.map((ad) => (
             <div key={ad.id}>
@@ -58,12 +71,13 @@ const RecentAds = () => {
                 category={ad.category}
               />
               <button
-                className="button"
+                className="button delete-ad"
                 onClick={() => {
-                  setTotal(total + ad.price);
+                  // console.log("id ",ad.id);
+                  handleDeleteAd(ad.id);
                 }}
               >
-                Add price to total
+                Supprimer l'annonce
               </button>
             </div>
           ))}

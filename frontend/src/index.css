@@ -79,6 +79,10 @@ h1 {
   background-color: white;
   cursor: pointer;
 }
+
+.delete-ad{
+  margin-top: 3px;
+}
 .logo {
   border: none;
 }
