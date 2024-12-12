@@ -1,12 +1,15 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Category, { CategoryProps } from "./Category";
-import { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import { fetchAdsUsingQueryParams } from "../utils/adSerices";
 
 const Header = () => {
+  const navigate = useNavigate();
   const [categories, setCategories] = useState<CategoryProps[]>([]);
+  const [searchValue, setSearchValue] = useState(""); //garder la valeur du champ de recherche
+  const inputRef = useRef<HTMLInputElement>(null); // 🔥 Référence de l'input
   //récupérer les catéories
-
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -20,6 +23,28 @@ const Header = () => {
     fetchCategories();
   }, []);
 
+ // 🔥 Gestion du focus uniquement au clic
+ const handleInputClick = () => {
+  if (inputRef.current) {
+    inputRef.current.focus(); // Focus sur l'input uniquement lors du clic
+  }
+};
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(event.target.value);
+  };
+
+  const handleSearch = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (searchValue) {
+      const isMatch = await fetchAdsUsingQueryParams(searchValue);
+      if (isMatch.length > 0) {
+        navigate(`ad/search?title=${searchValue}`); // Redirige si une annonce est trouvée
+      } else {
+        setSearchValue(""); // Vide le champ de recherche si rien n'est trouvé
+      }
+    }
+  };
+
   return (
     <>
       <header className="header">
@@ -31,9 +56,16 @@ const Header = () => {
             </Link>
           </h1>
 
-          <form className="text-field-with-button">
-            <input className="text-field main-search-field" type="search" />
-            <button className="button button-primary">
+          <form className="text-field-with-button" onSubmit={handleSearch}>
+            <input
+              ref={inputRef} // 🔥 On attache l'input à la référence
+              className="text-field main-search-field"
+              type="search"
+              value={searchValue}
+              onChange={handleInputChange}
+              onClick={handleInputClick}
+            />
+            <button className="button button-primary" type="submit">
               <svg
                 aria-hidden="true"
                 width="16"

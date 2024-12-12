@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import AdCard, { AdCardProps } from "./AdCard";
 import { toast } from "react-toastify";
+import { handleDeleteAd } from "../utils/adSerices";
 
 type category = {
   id: string;
@@ -42,18 +43,7 @@ const RecentAds = () => {
     fetchAds();
     fetchCategories();
   }, []);
-  const handleDeleteAd = async (id: number) => {
-    try {
-      await axios.delete(`http://localhost:3000/ads/${id}`);
-      toast.success("🚀 Annonce supprimée avec");
 
-      //mettre à jour la liste de annonces après suppression
-      setAds(ads.filter((ad) => ad.id != id));
-    } catch (error) {
-      console.log("Erreur dans la tentative de suppression de l'annonce");
-      toast.error("❌ Impossible de supprimer l'annonce !");
-    }
-  };
   return (
     <>
       <main className="main-content">
@@ -74,7 +64,7 @@ const RecentAds = () => {
                 className="button delete-ad"
                 onClick={() => {
                   // console.log("id ",ad.id);
-                  handleDeleteAd(ad.id);
+                  handleDeleteAd(ad.id,setAds);
                 }}
               >
                 Supprimer l'annonce

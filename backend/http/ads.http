@@ -3,6 +3,9 @@
 GET http://localhost:3000/ads
 
 ###
+GET http://localhost:3000/ads?title=titre
+
+###
 
 GET http://localhost:3000/ads/33
 

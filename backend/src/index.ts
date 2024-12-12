@@ -33,21 +33,26 @@ app.get("/ads", async (req, res) => {
       ? { name: Like(`%${req.query.tag}%`) }
       : undefined;
 
+    const titleFilter = req.query.title
+      ? { title: Like(`%${req.query.title}%`) }
+      : undefined;
+
     const ads = await Ad.find({
       relations: {
         category: true,
         tags: true,
       },
+      //filter by category, tad, and/or title
       where: {
         ...(categoryFilter && { category: categoryFilter }),
         ...(tagFilter && { tags: tagFilter }),
+        ...(titleFilter && { title: titleFilter.title }),
       },
       order: {
-        id:"DESC"
-      }
+        id: "DESC",
+      },
     });
 
-    // console.log(ads);
     res.json(ads);
   } catch (error) {
     console.error("Error retrieving ads:", error.message);
