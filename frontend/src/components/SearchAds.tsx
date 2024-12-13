@@ -8,32 +8,46 @@ const SearchAds = () => {
   const [adsFiltred, setAdsFiltred] = useState<AdCardProps[]>([]);
 
   const [searchParams, _setSearchParams] = useSearchParams();
+  //dynamic objec parameter
   const title = searchParams.get("title");
+  const category = searchParams.get("category");
+  const tag = searchParams.get("tag");
+
+  let filters: {
+    title?: string;
+    category?: string;
+    tag?: string;
+  } = {};
+
+  if (title) filters.title = title;
+  if (category) filters.category = category;
+  if (tag) filters.tag = tag;
+
+  // console.log("Obejct ", Object.keys(filters));
 
   useEffect(() => {
     const fetchData = async () => {
-      if (title) {
-        const ads = await fetchAdsUsingQueryParams(title);
+      if (Object.keys(filters).length > 0) {
+        const ads = await fetchAdsUsingQueryParams(filters);
         setAdsFiltred(ads);
         console.log("isMatch", ads);
-        // setAdsFiltred()
         if (!ads) {
+          setAdsFiltred([]);
           console.log("Aucun correspondance");
           navigate("/");
         }
       }
     };
 
-    if (title) fetchData();
-  }, [title]);
+    if (title || category || tag) fetchData();
+  }, [title, category, tag]);
 
-  console.log("seraching word ==> ", title);
   console.log("adFiltred ==> ", adsFiltred);
 
   return (
     <>
       <main className="main-content">
-        <h2>Liste des annonces correspondantes à "{title}"</h2>
+        <h2>Liste des annonces correspondantes</h2>
         {/* <p>Prix total : {total} €</p> */}
         <section className="recent-ads">
           {adsFiltred.map((ad) => (

@@ -36,7 +36,7 @@ const Header = () => {
   const handleSearch = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (searchValue) {
-      const isMatch = await fetchAdsUsingQueryParams(searchValue);
+      const isMatch = await fetchAdsUsingQueryParams({ title: searchValue });
       if (isMatch.length > 0) {
         navigate(`ad/search?title=${searchValue}`); // Redirige si une annonce est trouvée
       } else {

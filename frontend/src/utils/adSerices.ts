@@ -25,17 +25,22 @@ export const handleDeleteAd = async (
 
 /**
  * Rechercher des annonces en utilisant les paramètres de requête
- * @param {string} title - Le titre de l'annonce à rechercher
+ * @param {Object} filters -  Objet contenant le titre et la catégorie
+ * @param {string} [filter.title] - Le titre de l'annonce
+ * @param {string} [filter.category] - catégorie de l'annonce
+ * @param {string} [filter.tag] - tag de l'annonce
  * @returns {AdCardProps[]} - Tableau d'annonces filtrées
  */
-export const fetchAdsUsingQueryParams = async (
-  title: string
-): Promise<AdCardProps[]> => {
+
+export const fetchAdsUsingQueryParams = async (filters: {
+  title?: string;
+  category?: string;
+  tag?: string;
+}): Promise<AdCardProps[]> => {
   try {
-    const response = await axios.get("http://localhost:3000/ads", {
-      params: {
-        title: `${title}`,
-      },
+    const url = "http://localhost:3000/ads";
+    const response = await axios.get(url, {
+      params: filters,
     });
     if (response.data.length > 0) {
       return response.data; // On a trouvé des annonces
@@ -49,15 +54,3 @@ export const fetchAdsUsingQueryParams = async (
   }
 };
 
-  // const handleDeleteAd = async (id: number) => {
-  //   try {
-  //     await axios.delete(`http://localhost:3000/ads/${id}`);
-  //     toast.success("🚀 Annonce supprimée avec");
-
-  //     //mettre à jour la liste de annonces après suppression
-  //     setAds(ads.filter((ad) => ad.id != id));
-  //   } catch (error) {
-  //     console.log("Erreur dans la tentative de suppression de l'annonce");
-  //     toast.error("❌ Impossible de supprimer l'annonce !");
-  //   }
-  // };

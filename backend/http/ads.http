@@ -13,6 +13,15 @@ GET http://localhost:3000/ads/33
 
 GET http://localhost:3000/ads?category=aut&tag=exclu
 
+
+###
+GET http://localhost:3000/ads?category=livres
+
+
+###
+GET http://localhost:3000/ads?tag=promo
+
+
 ### add new ads - POST
 POST http://localhost:3000/ads
 Content-Type: application/json
