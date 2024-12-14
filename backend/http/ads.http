@@ -15,11 +15,11 @@ GET http://localhost:3000/ads?category=aut&tag=exclu
 
 
 ###
-GET http://localhost:3000/ads?category=livres
+GET http://localhost:3000/ads?category=lilires
 
 
 ###
-GET http://localhost:3000/ads?tag=promo
+GET http://localhost:3000/ads?tag=limited
 
 
 ### add new ads - POST

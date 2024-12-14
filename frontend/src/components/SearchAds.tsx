@@ -30,7 +30,7 @@ const SearchAds = () => {
       if (Object.keys(filters).length > 0) {
         const ads = await fetchAdsUsingQueryParams(filters);
         setAdsFiltred(ads);
-        console.log("isMatch", ads);
+        // console.log("isMatch", ads);
         if (!ads) {
           setAdsFiltred([]);
           console.log("Aucun correspondance");
@@ -42,12 +42,11 @@ const SearchAds = () => {
     if (title || category || tag) fetchData();
   }, [title, category, tag]);
 
-  console.log("adFiltred ==> ", adsFiltred);
+  // console.log("adFiltred ==> ", adsFiltred);
 
   return (
     <>
       <main className="main-content">
-        <h2>Liste des annonces correspondantes</h2>
         {/* <p>Prix total : {total} €</p> */}
         <section className="recent-ads">
           {adsFiltred.map((ad) => (

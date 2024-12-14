@@ -14,7 +14,7 @@ const Header = () => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get("http://localhost:3000/categories");
-        setCategories(response.data);
+        if (response) setCategories(response.data);
         // console.log("catégories", response.data);
       } catch (error) {
         console.log("Erreur fetching categories", error);
@@ -23,12 +23,12 @@ const Header = () => {
     fetchCategories();
   }, []);
 
- // 🔥 Gestion du focus uniquement au clic
- const handleInputClick = () => {
-  if (inputRef.current) {
-    inputRef.current.focus(); // Focus sur l'input uniquement lors du clic
-  }
-};
+  // 🔥 Gestion du focus uniquement au clic
+  const handleInputClick = () => {
+    if (inputRef.current) {
+      inputRef.current.focus(); // Focus sur l'input uniquement lors du clic
+    }
+  };
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(event.target.value);
   };
@@ -94,7 +94,7 @@ const Header = () => {
           {categories.map((category) => (
             <Category
               key={category.id}
-              id={category.id}
+              // id={category.id}
               title={category.title}
             />
           ))}
