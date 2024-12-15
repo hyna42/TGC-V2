@@ -11,13 +11,13 @@ type AdDetailsProps = {
   owner: string;
   pictures: string[];
   price: number;
+  tags: { id: number; name: string }[];
   // category: { id: number; title: string };
-  // tags: { id: number; name: string };
 };
 
 const AdDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
-  const [adDetails, setAdDetails] = useState<AdDetailsProps | null>(null);
+  const [adDetails, setAdDetails] = useState<AdDetailsProps|null>(null);
 
   useEffect(() => {
     const fetchAdDetails = async () => {
@@ -33,13 +33,15 @@ const AdDetailsPage = () => {
     };
     fetchAdDetails();
   }, []);
-  // console.log(adDetails);
+
+ 
+  console.log("AdDetails  ==> ",adDetails);
   if (!adDetails) return <p>Chargement des détails de l'annonce...</p>;
   return (
     <>
-      <h3>Détails de l'annonce n° ({id})</h3>
-
-      <h2 className="ad-details-title">{adDetails.title}</h2>
+      <h2 className="ad-details-title">{adDetails.title}
+      </h2>
+      {adDetails.tags.map((tag) => { return <span className="ad-details-tag-name" key={tag.id}>{ tag.name}</span>})}
       <section className="ad-details">
         <div className="ad-details-image-container">
           <img className="ad-details-image" src={adDetails.pictures[0]} />

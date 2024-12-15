@@ -80,7 +80,7 @@ h1 {
   cursor: pointer;
 }
 
-.delete-ad{
+.delete-ad {
   margin-top: 3px;
 }
 .logo {
@@ -178,6 +178,18 @@ h1 {
   gap: 24px;
 }
 
+.ad-details-tag-name {
+  font-size: 10px;
+  background-color: rgb(255, 255, 255);
+  border: 1px solid rgb(255, 164, 27);
+  padding: 0 5px 2px;
+  margin: 0 2px 19.2px 2px;
+  border-radius: 4px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  color: #161212;
+}
 @media screen and (min-width: 720px) {
   .mobile-short-label {
     display: none;
@@ -256,8 +268,7 @@ form {
   cursor: pointer;
 }
 
-
-.error-message{
+.error-message {
   color: red;
   font-weight: bold;
 }
