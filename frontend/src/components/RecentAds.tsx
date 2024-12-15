@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 // import AdCard, { AdCardProps } from "./AdCard";
 import axios from "axios";
 import AdCard, { AdCardProps } from "./AdCard";
-import { toast } from "react-toastify";
 import { handleDeleteAd } from "../utils/adSerices";
 
 type category = {
@@ -67,7 +66,7 @@ const RecentAds = () => {
                   handleDeleteAd(ad.id,setAds);
                 }}
               >
-                Supprimer l'annonce
+                Supprimer
               </button>
             </div>
           ))}

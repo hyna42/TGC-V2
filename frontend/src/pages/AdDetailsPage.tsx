@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 type AdDetailsProps = {
   id: number;
@@ -17,7 +17,7 @@ type AdDetailsProps = {
 
 const AdDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
-  const [adDetails, setAdDetails] = useState<AdDetailsProps|null>(null);
+  const [adDetails, setAdDetails] = useState<AdDetailsProps | null>(null);
 
   useEffect(() => {
     const fetchAdDetails = async () => {
@@ -34,14 +34,18 @@ const AdDetailsPage = () => {
     fetchAdDetails();
   }, []);
 
- 
-  console.log("AdDetails  ==> ",adDetails);
+  console.log("AdDetails  ==> ", adDetails);
   if (!adDetails) return <p>Chargement des détails de l'annonce...</p>;
   return (
     <>
-      <h2 className="ad-details-title">{adDetails.title}
-      </h2>
-      {adDetails.tags.map((tag) => { return <span className="ad-details-tag-name" key={tag.id}>{ tag.name}</span>})}
+      <h2 className="ad-details-title">{adDetails.title}</h2>
+      {adDetails.tags.map((tag) => {
+        return (
+          <span className="ad-details-tag-name" key={tag.id}>
+            {tag.name}
+          </span>
+        );
+      })}
       <section className="ad-details">
         <div className="ad-details-image-container">
           <img className="ad-details-image" src={adDetails.pictures[0]} />
@@ -75,6 +79,12 @@ const AdDetailsPage = () => {
             Envoyer un email
           </a>
         </div>
+        <Link
+          to={`/ad/update/${id}`}
+          className="button button-primary link-button"
+        >
+          Modifier
+        </Link>
       </section>
     </>
   );

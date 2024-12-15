@@ -19,7 +19,7 @@ const AdCard = ({ title, pictures, price, category, id }: AdCardProps) => {
           <img className="ad-card-image" src={pictures[0]} />
           <div className="ad-card-text">
             <div className="ad-card-title">{title}</div>
-            <div className="ad-card-price">| {price} €</div>
+            <div className="ad-card-price">{price} €</div>
           </div>
           <p className="ad-card-category">{category?.title} </p>
         </Link>
