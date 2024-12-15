@@ -38,6 +38,11 @@ h1 {
   padding: 16px 10px 6px;
   white-space: nowrap;
   overflow-x: scroll;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
 }
 
 .category-navigation-link {
