@@ -146,7 +146,7 @@ const UpdateAdPage = () => {
       pictures: formData.pictures.map((picture) => picture.url), //string[]
     };
 
-    console.log("payload ", dataPayload);
+    // console.log("payload ", dataPayload);
     try {
       await axios.put<FormPayload[]>(
         `http://localhost:3000/ads/${id}`,
@@ -165,7 +165,7 @@ const UpdateAdPage = () => {
 
   //logs
   // console.log("id", id);
-  console.log("AdDetails Update  ==> ", adDetails);
+  // console.log("AdDetails Update  ==> ", adDetails);
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>

@@ -34,7 +34,7 @@ const AdDetailsPage = () => {
     fetchAdDetails();
   }, []);
 
-  console.log("AdDetails  ==> ", adDetails);
+  // console.log("AdDetails  ==> ", adDetails);
   if (!adDetails) return <p>Chargement des détails de l'annonce...</p>;
   return (
     <>
