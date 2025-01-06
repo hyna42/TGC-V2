@@ -2,7 +2,7 @@ import {
   BaseEntity,
   Column,
   Entity,
-  ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Ad } from "./Ad";
@@ -10,15 +10,16 @@ import { Field, ObjectType } from "type-graphql";
 
 @ObjectType()
 @Entity()
-export class Tag extends BaseEntity {
+export class Picture extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
   id: number;
 
   @Field()
-  @Column({ unique: true })
-  name: string;
+  @Column()
+  url: string;
 
-  @ManyToMany(() => Ad, (ad) => ad.tags)
-  ads: Ad[];
+  @Field(() => Ad)
+  @ManyToOne(() => Ad, (ad) => ad.pictures, { onDelete: "CASCADE" })
+  ad: Ad;
 }
