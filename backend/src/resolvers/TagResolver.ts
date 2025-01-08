@@ -30,7 +30,7 @@ class TagResolver {
   async deleteTag(@Arg("id") id: number) {
     const TagToDelete = await Tag.findOneBy({ id });
     await TagToDelete?.remove();
-    return `Tag has been deleted successfully`;
+    return `Tag successfully deleted`;
   }
 
   //update Tag
@@ -43,7 +43,7 @@ class TagResolver {
     }
     await TagToUpdate?.save();
 
-    return `Tag ${data.id} has bee updated`;
+    return `Tag successfully updated`;
   }
 }
 

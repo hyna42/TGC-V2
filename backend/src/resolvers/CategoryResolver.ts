@@ -22,7 +22,7 @@ class CategoryResolver {
   async deleteCategory(@Arg("id") id: number) {
     const categoryToDelete = await Category.findOneBy({ id });
     await categoryToDelete?.remove();
-    return `Category ${id} has been deleted`;
+    return `Category successfully deleted!`;
   }
 
   //create category
@@ -44,7 +44,7 @@ class CategoryResolver {
       Object.assign(categoryToUpdate, { title: data.title });
 
     await categoryToUpdate?.save();
-    return `Category ${data.id} has been updated`;
+    return `Category successfully updated`;
   }
 }
 

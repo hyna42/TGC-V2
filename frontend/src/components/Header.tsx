@@ -6,7 +6,7 @@ import { fetchAdsUsingQueryParams } from "../utils/adSerices";
 import { useGetAllAdsQuery } from "../generated/graphql-types";
 
 const Header = () => {
-  const { loading, error, data }  = useGetAllAdsQuery()
+  const { loading, error, data } = useGetAllAdsQuery()
   const navigate = useNavigate();
   const [categories, setCategories] = useState<CategoryProps[]>([]);
   const [searchValue, setSearchValue] = useState(""); //garder la valeur du champ de recherche
@@ -46,9 +46,10 @@ const Header = () => {
       }
     }
   };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error : {error.message}</p>;
-  console.log('ads==>',data?.getAllAds)
+  console.log('ads',data?.getAllAds)
 
   return (
     <>

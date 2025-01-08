@@ -53,11 +53,11 @@ class AdResolver {
     const adToDelete = await Ad.findOne({ where: { id } });
 
     await adToDelete?.remove();
-    return "Ad has been deleted";
+    return "Ad successfully deleted!";
   }
 
   //create new ad
-  @Mutation(() => Ad)
+  @Mutation(() => String)
   async createNewAd(@Arg("data") data: AdInput) {
     // Gestion de la relation Category
     let category: Category | undefined = undefined;
@@ -90,8 +90,8 @@ class AdResolver {
       pictures,
       tags,
     });
-    const result = await adToSave.save();
-    return result;
+    await adToSave.save();
+    return `Ad successfully created!`;
   }
 
   //update ad
