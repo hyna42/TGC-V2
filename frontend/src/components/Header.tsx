@@ -3,37 +3,10 @@ import Category, { CategoryProps } from "./Category";
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { fetchAdsUsingQueryParams } from "../utils/adSerices";
-
-import { useQuery, gql } from "@apollo/client";
-
-const GET_ALL_ADS = gql`
-  query GetAllAds {
-    getAllAds {
-      id
-      title
-      description
-      owner
-      price
-      location
-      createdAt
-      pictures {
-        id
-        url
-      }
-      category {
-        id
-        title
-      }
-      tags {
-        id
-        name
-      }
-    }
-  }
-`;
+import { useGetAllAdsQuery } from "../generated/graphql-types";
 
 const Header = () => {
-  const { loading, error, data:getAllAds } = useQuery(GET_ALL_ADS);
+  const { loading, error, data }  = useGetAllAdsQuery()
   const navigate = useNavigate();
   const [categories, setCategories] = useState<CategoryProps[]>([]);
   const [searchValue, setSearchValue] = useState(""); //garder la valeur du champ de recherche
@@ -75,7 +48,7 @@ const Header = () => {
   };
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error : {error.message}</p>;
-  console.log('allAds==>',getAllAds)
+  console.log('ads==>',data?.getAllAds)
 
   return (
     <>
