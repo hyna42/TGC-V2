@@ -11,7 +11,7 @@ const start = async () => {
   await datasource.initialize();
 
   const schema = await buildSchema({
-    resolvers: [AdResolver, CategoryResolver,TagResolver]
+    resolvers: [AdResolver, CategoryResolver, TagResolver],
     // resolvers: [AdResolver, CategoryResolver, TagResolver],
   });
 
