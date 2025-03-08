@@ -5,7 +5,7 @@ import { Tag } from "../entities/Tag";
 import { Picture } from "../entities/Picture";
 
 export const datasource = new DataSource({
-  type: "sqlite",
+  type: "better-sqlite3",
   database: "../../good_corner.sqlite",
   entities: [Ad, Category, Tag, Picture],
   synchronize: true,
