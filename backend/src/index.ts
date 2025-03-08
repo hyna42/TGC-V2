@@ -23,7 +23,7 @@ const start = async () => {
     listen: { port: 4000 },
   });
 
-  console.log(`🚀  Server ready at: ${url}`);
+  console.log(`🚀 Server ready at: ${url}`);
 };
 
 start();
