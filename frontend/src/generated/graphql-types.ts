@@ -30,6 +30,7 @@ export type Ad = {
   price: Scalars['Float']['output'];
   tags?: Maybe<Array<Tag>>;
   title: Scalars['String']['output'];
+  updatedAt: Scalars['DateTimeISO']['output'];
 };
 
 export type AdInput = {

@@ -1,12 +1,14 @@
 import {
   BaseEntity,
   Column,
+  CreateDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
 import { MinLength } from "class-validator";
 import { Category } from "./Category";
@@ -43,8 +45,12 @@ export class Ad extends BaseEntity {
   location: string;
 
   @Field()
-  @Column()
+  @CreateDateColumn()
   createdAt: Date;
+
+  @Field()
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   //Relation One-To-many avec la table Picture
   @Field(() => [Picture], { nullable: true })

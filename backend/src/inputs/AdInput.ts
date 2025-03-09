@@ -17,9 +17,6 @@ class AdInput {
   @Field()
   location: string;
 
-  @Field()
-  createdAt: Date;
-
   //on vas strocker une liste de chaines d'urls de Pictures
   @Field(() => [String], { nullable: true })
   pictures?: string[];

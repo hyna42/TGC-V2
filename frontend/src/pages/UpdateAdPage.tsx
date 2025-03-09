@@ -2,9 +2,14 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
-// import { validate } from "../validation/validate";
-import { toast } from "react-toastify";
+// import { useNavigate, useParams } from "react-router-dom";
+// import { toast } from "react-toastify";
+import {
+  useGetAdByIdQuery,
+  useGetAllCategoriesQuery,
+  useGetAllTagsQuery,
+} from "../generated/graphql-types";
+import { useParams } from "react-router-dom";
 
 export type FormPayload = {
   title: string;
@@ -45,11 +50,23 @@ export type Tag = {
 };
 
 const UpdateAdPage = () => {
-  const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
+  // const navigate = useNavigate();
+  const { id } = useParams();
   const [adDetails, setAdDetails] = useState<AdDetailsType | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
+
+  const { data } = useGetAdByIdQuery({
+    variables: { getAdByIdId: parseInt(id as string) },
+  });
+  const fetchAdDetails = data?.getAdById;
+  console.log("fetchAdDetails", fetchAdDetails);
+
+  const { data: fetchCategories } = useGetAllCategoriesQuery();
+  const allCategories = fetchCategories?.getAllCategories || [];
+
+  const { data: fetchTags } = useGetAllTagsQuery();
+  const allTags = fetchTags?.getAllTags || [];
 
   useEffect(() => {
     const fetchAdDetails = async () => {
@@ -113,6 +130,8 @@ const UpdateAdPage = () => {
 
   const {
     register,
+    setValue,
+    getValues,
     handleSubmit,
     control,
     formState: { errors },
@@ -133,6 +152,7 @@ const UpdateAdPage = () => {
     control,
     name: "pictures",
   });
+
   const onSubmit: SubmitHandler<FormPayload> = async (formData) => {
     //préparer le payload
 
@@ -146,75 +166,118 @@ const UpdateAdPage = () => {
       pictures: formData.pictures.map((picture) => picture.url), //string[]
     };
 
-    // console.log("payload ", dataPayload);
-    try {
-      await axios.put<FormPayload[]>(
-        `http://localhost:3000/ads/${id}`,
-        dataPayload
-      );
+    console.log("payload ", dataPayload);
+    // try {
+    //   await axios.put<FormPayload[]>(
+    //     `http://localhost:3000/ads/${id}`,
+    //     dataPayload
+    //   );
 
-      toast.success("🚀 Votre annonce a été modifiée avec succès !");
-      navigate("/");
-    } catch (error) {
-      console.error("Error create ad", error);
-      toast.error(
-        "Une erreur est survenue lors de la modification de l'annonce"
-      );
-    }
+    //   toast.success("🚀 Votre annonce a été modifiée avec succès !");
+    //   navigate("/");
+    // } catch (error) {
+    //   console.error("Error create ad", error);
+    //   toast.error(
+    //     "Une erreur est survenue lors de la modification de l'annonce"
+    //   );
+    // }
   };
 
   //logs
   // console.log("id", id);
   // console.log("AdDetails Update  ==> ", adDetails);
+  useEffect(() => {
+    if (fetchAdDetails?.category?.id) {
+      setValue("category", fetchAdDetails.category.id);
+    }
+  }, [fetchAdDetails, setValue]);
+
+  useEffect(() => {
+    if (fetchAdDetails?.tags) {
+      setValue(
+        "tags",
+        fetchAdDetails.tags.map((tag) => tag.id)
+      );
+    }
+  }, [fetchAdDetails, setValue]);
+
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="form-group">
-          <label>Titre</label>
-          <input {...register("title")} className="text-field" />
+          <label htmlFor="title">Titre</label>
+          <input
+            {...register("title")}
+            id="title"
+            className="text-field"
+            defaultValue={fetchAdDetails?.title}
+          />
           {errors.title && (
             <span className="error-message">{errors.title.message}</span>
           )}
         </div>
 
         <div className="form-group">
-          <label>Description</label>
-          <input {...register("description")} className="text-field" />
+          <label htmlFor="description">Description</label>
+          <input
+            {...register("description")}
+            id="description"
+            className="text-field"
+            defaultValue={fetchAdDetails?.description}
+          />
           {errors.description && (
             <span className="error-message">{errors.description.message}</span>
           )}
         </div>
 
         <div className="form-group">
-          <label>Auteur</label>
-          <input {...register("owner")} className="text-field" />
+          <label htmlFor="owner">Auteur</label>
+          <input
+            {...register("owner")}
+            id="owner"
+            className="text-field"
+            defaultValue={fetchAdDetails?.owner}
+          />
           {errors.owner && (
             <span className="error-message">{errors.owner.message}</span>
           )}
         </div>
 
         <div className="form-group">
-          <label>Prix</label>
-          <input {...register("price")} className="text-field" type="number" />
+          <label htmlFor="price">Prix</label>
+          <input
+            {...register("price")}
+            id="price"
+            className="text-field"
+            type="number"
+            defaultValue={fetchAdDetails?.price}
+          />
           {errors.price && (
             <span className="error-message">{errors.price.message}</span>
           )}
         </div>
 
         <div className="form-group">
-          <label>Localisation</label>
-          <input {...register("location")} className="text-field" />
+          <label htmlFor="location">Localisation</label>
+          <input
+            {...register("location")}
+            id="location"
+            className="text-field"
+            defaultValue={fetchAdDetails?.location}
+          />
           {errors.location && (
             <span className="error-message">{errors.location.message}</span>
           )}
         </div>
 
         <div className="form-group">
-          <label>Date de création</label>
+          <label htmlFor="createdAt">Date de création</label>
           <input
             {...register("createdAt")}
+            id="createdAt"
             className="text-field"
             type="date"
+            defaultValue={fetchAdDetails?.createdAt?.split("T")[0]}
           />
           {errors.createdAt && (
             <span className="error-message">{errors.createdAt.message}</span>
@@ -234,12 +297,13 @@ const UpdateAdPage = () => {
               <input
                 type="text"
                 {...register(`pictures.${index}.url`)}
+                id={`picture-${index}`}
                 className="text-field"
+                defaultValue={fetchAdDetails?.pictures?.[index]?.url}
               />
               <button type="button" onClick={() => remove(index)}>
                 Supprimer une photo
               </button>
-              {/* Affichage des erreurs spécifiques pour ce champ */}
               {errors.pictures?.[index]?.url && (
                 <span className="error-message">
                   {errors.pictures[index]?.url?.message}
@@ -253,11 +317,17 @@ const UpdateAdPage = () => {
         </div>
 
         <div className="form-group">
-          <label>Catégories</label>
-          <select {...register("category")} className="text-field">
-            <option value="">...</option>
-            {categories.map((category) => (
-              <option value={category.id} key={category.id}>
+          <label htmlFor="category">Catégories</label>
+          <select
+            {...register("category")}
+            id="category"
+            className="text-field"
+          >
+            <option value="" disabled>
+              Sélectionner une catégorie...
+            </option>
+            {allCategories.map((category) => (
+              <option key={category.id} value={category.id}>
                 {category.title}
               </option>
             ))}
@@ -266,19 +336,31 @@ const UpdateAdPage = () => {
             <span className="error-message">{errors.category.message}</span>
           )}
         </div>
-        <div className="form-group">
+
+        {/* <div className="form-group">
           <label>Tags</label>
           <div className="tags-container">
-            {tags.map((tag) => (
+            {allTags.map((tag) => (
               <div key={tag.id} className="tag-item">
                 <input
                   type="checkbox"
                   value={tag.id}
                   id={`tag-${tag.id}`}
                   {...register("tags")}
-                  defaultChecked={adDetails?.tags.some(
+                  defaultChecked={fetchAdDetails?.tags?.some(
                     (adTag) => adTag.id === tag.id
                   )}
+                  onChange={(e) => {
+                    const selectedTags = getValues("tags") || [];
+                    if (e.target.checked) {
+                      setValue("tags", [...selectedTags, tag.id]); // Ajoute le tag
+                    } else {
+                      setValue(
+                        "tags",
+                        selectedTags.filter((id) => id !== tag.id)
+                      ); // Retire le tag
+                    }
+                  }}
                 />
                 <label htmlFor={`tag-${tag.id}`}>{tag.name}</label>
               </div>
@@ -287,7 +369,7 @@ const UpdateAdPage = () => {
           {errors.tags && (
             <span className="error-message">{errors.tags.message}</span>
           )}
-        </div>
+        </div> */}
 
         <input type="submit" className="button" />
       </form>

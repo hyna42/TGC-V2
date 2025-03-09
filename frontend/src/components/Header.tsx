@@ -1,29 +1,20 @@
 import { Link, useNavigate } from "react-router-dom";
-import Category, { CategoryProps } from "./Category";
-import React, { useEffect, useRef, useState } from "react";
-import axios from "axios";
+import Category from "./Category";
+import React, {useRef, useState } from "react";
+
 import { fetchAdsUsingQueryParams } from "../utils/adSerices";
-import { useGetAllAdsQuery } from "../generated/graphql-types";
+import {  useGetAllCategoriesQuery } from "../generated/graphql-types";
 
 const Header = () => {
-  const { loading, error, data } = useGetAllAdsQuery()
+  
   const navigate = useNavigate();
-  const [categories, setCategories] = useState<CategoryProps[]>([]);
+  // const [categories, setCategories] = useState<CategoryProps[]>([]);
   const [searchValue, setSearchValue] = useState(""); //garder la valeur du champ de recherche
   const inputRef = useRef<HTMLInputElement>(null); // 🔥 Référence de l'input
-  //récupérer les catéories
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get("http://localhost:3000/categories");
-        if (response) setCategories(response.data);
-        // console.log("catégories", response.data);
-      } catch (error) {
-        console.log("Erreur fetching categories", error);
-      }
-    };
-    fetchCategories();
-  }, []);
+
+  const { data: fetchCategoriesData } = useGetAllCategoriesQuery();
+  const categories = fetchCategoriesData?.getAllCategories || [];
+  // console.log("allCat", categories)
 
   // 🔥 Gestion du focus uniquement au clic
   const handleInputClick = () => {
@@ -46,10 +37,6 @@ const Header = () => {
       }
     }
   };
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error : {error.message}</p>;
-  console.log('ads',data?.getAllAds)
 
   return (
     <>

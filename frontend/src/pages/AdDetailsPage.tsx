@@ -1,54 +1,28 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-
-type AdDetailsProps = {
-  id: number;
-  title: string;
-  createdAt: string;
-  description: string;
-  location: string;
-  owner: string;
-  pictures: string[];
-  price: number;
-  tags: { id: number; name: string }[];
-  // category: { id: number; title: string };
-};
+import { useGetAdByIdQuery } from "../generated/graphql-types";
 
 const AdDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
-  const [adDetails, setAdDetails] = useState<AdDetailsProps | null>(null);
 
-  useEffect(() => {
-    const fetchAdDetails = async () => {
-      try {
-        const response = await axios.get(`http://localhost:3000/ads/${id}`);
-        setAdDetails(response.data);
-      } catch (error) {
-        console.log(
-          "Erreur dans la tentative de récupératon des détails de l'annonce",
-          error
-        );
-      }
-    };
-    fetchAdDetails();
-  }, []);
-
-  // console.log("AdDetails  ==> ", adDetails);
-  if (!adDetails) return <p>Chargement des détails de l'annonce...</p>;
+  const { data } = useGetAdByIdQuery({ variables: { getAdByIdId: parseInt(id as string) } })
+  const adDetails = data?.getAdById ;
+  
+  console.log('adDetails', adDetails)
+    if (!adDetails) return <p>Chargement des détails de l'annonce...</p>;
   return (
     <>
       <h2 className="ad-details-title">{adDetails.title}</h2>
-      {adDetails.tags.map((tag) => {
+      {adDetails.tags?.map((tag) => {
         return (
           <span className="ad-details-tag-name" key={tag.id}>
             {tag.name}
           </span>
         );
       })}
+
       <section className="ad-details">
         <div className="ad-details-image-container">
-          <img className="ad-details-image" src={adDetails.pictures[0]} />
+          <img className="ad-details-image" src={adDetails.pictures?.[0].url} />
         </div>
         <div className="ad-details-info">
           <div className="ad-details-price">{adDetails.price} €</div>
