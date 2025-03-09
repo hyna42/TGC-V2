@@ -1,5 +1,7 @@
 FROM node:lts-alpine
 
+RUN apk add --no-cache curl
+
 WORKDIR /app
 
 # Copie des fichiers de configuration et de dépendances
