@@ -124,8 +124,8 @@ const NewAddFormPage = () => {
   };
 
   return (
-    <>
-      <form onSubmit={handleSubmit(onSubmit)}>
+    <div className="page-container">
+      <form onSubmit={handleSubmit(onSubmit)} className="form-content">
         <div className="form-group">
           <label>Titre</label>
           <input {...register("title")} className="text-field" />
@@ -246,7 +246,7 @@ const NewAddFormPage = () => {
 
         <input type="submit" className="button" />
       </form>
-    </>
+    </div>
   );
 };
 

@@ -35,7 +35,6 @@ export type Ad = {
 
 export type AdInput = {
   categoryId: Scalars['Int']['input'];
-  createdAt: Scalars['DateTimeISO']['input'];
   description: Scalars['String']['input'];
   location: Scalars['String']['input'];
   owner: Scalars['String']['input'];

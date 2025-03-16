@@ -1,6 +1,4 @@
 // import { yupResolver } from "@hookform/resolvers/yup";
-import axios from "axios";
-import { useEffect, useState } from "react";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 // import { useNavigate, useParams } from "react-router-dom";
 // import { toast } from "react-toastify";
@@ -8,8 +6,12 @@ import {
   useGetAdByIdQuery,
   useGetAllCategoriesQuery,
   useGetAllTagsQuery,
+  useUpdateAdMutation,
 } from "../generated/graphql-types";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useEffect } from "react";
+import { GET_ALL_ADS } from "../graphql/queries";
 
 export type FormPayload = {
   title: string;
@@ -24,21 +26,6 @@ export type FormPayload = {
   tags: number[]; // Tableau d'IDs de tags
 };
 
-export type AdDetailsType = {
-  title: string;
-  description: string;
-  owner: string;
-  price: number;
-  location: string;
-  createdAt: string; //format ISO
-  // pictures: string[];
-  pictures: { url: string }[]; // Tableau d'URLs d'images
-  // category: number; // ID de la catégorie
-  category: { id: number; title: string };
-
-  tags: { id: number; name: string }[]; // Tableau d'IDs de tags
-};
-
 export type Category = {
   id: number;
   title: string;
@@ -50,11 +37,8 @@ export type Tag = {
 };
 
 const UpdateAdPage = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const { id } = useParams();
-  const [adDetails, setAdDetails] = useState<AdDetailsType | null>(null);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [tags, setTags] = useState<Tag[]>([]);
 
   const { data } = useGetAdByIdQuery({
     variables: { getAdByIdId: parseInt(id as string) },
@@ -68,90 +52,37 @@ const UpdateAdPage = () => {
   const { data: fetchTags } = useGetAllTagsQuery();
   const allTags = fetchTags?.getAllTags || [];
 
-  useEffect(() => {
-    const fetchAdDetails = async () => {
-      try {
-        const response = await axios.get<AdDetailsType>(
-          `http://localhost:3000/ads/${id}`
-        );
-
-        // ** Conversion des pictures pour garantir le bon format { url: string } **
-        const formattedPictures = response.data.pictures.map((picture) =>
-          typeof picture === "string" ? { url: picture } : picture
-        );
-
-        // 🔥 Extraire la date au format "aaaa-mm-jj"
-        const formattedDate = response.data.createdAt.slice(0, 10);
-
-        // On remplace l'ancien tableau de strings par le format attendu
-        setAdDetails({
-          ...response.data,
-          pictures: formattedPictures,
-          createdAt: formattedDate,
-        });
-      } catch (error) {
-        console.log(
-          "Erreur dans la tentative de récupératon des détails de l'annonce",
-          error
-        );
-      }
-    };
-    fetchAdDetails();
-  }, [id]);
-
-  useEffect(() => {
-    //Récupérer les catégories
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get<Category[]>(
-          "http://localhost:3000/categories"
-        );
-        if (response.data) setCategories(response.data);
-        //   console.log("categories",categories);
-      } catch (error) {
-        console.log("error fetching categories", error);
-      }
-    };
-
-    //Récupérer les tags
-    const fetchTags = async () => {
-      try {
-        const response = await axios.get<Tag[]>("http://localhost:3000/tags");
-        if (response.data) setTags(response.data);
-        //   console.log("categories",categories);
-      } catch (error) {
-        console.log("error fetching tags", error);
-      }
-    };
-
-    fetchCategories();
-    fetchTags();
-  }, []);
+  const [updateAd] = useUpdateAdMutation();
+  // console.log('tag',allTags)
 
   const {
     register,
-    setValue,
-    getValues,
     handleSubmit,
     control,
+    setValue,
     formState: { errors },
-    reset,
   } = useForm<FormPayload>();
-
-  useEffect(() => {
-    if (adDetails) {
-      reset({
-        ...adDetails,
-        category: adDetails.category.id,
-        tags: adDetails.tags.map((tag) => tag.id),
-      });
-    }
-  }, [adDetails, reset]);
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "pictures",
   });
+
+  useEffect(() => {
+    if (fetchAdDetails) {
+      setValue("title", fetchAdDetails.title);
+      setValue("description", fetchAdDetails.description);
+      setValue("owner", fetchAdDetails.owner);
+      setValue("price", fetchAdDetails.price);
+      setValue("location", fetchAdDetails.location);
+      setValue("createdAt", fetchAdDetails.createdAt.split("T")[0]);
+      setValue("category", fetchAdDetails.category.id);
+      setValue(
+        "pictures",
+        fetchAdDetails.pictures?.map((pic) => ({ url: pic.url })) || []
+      );
+    }
+  }, [fetchAdDetails, setValue]);
 
   const onSubmit: SubmitHandler<FormPayload> = async (formData) => {
     //préparer le payload
@@ -159,90 +90,72 @@ const UpdateAdPage = () => {
     console.log("formData ", formData);
 
     const dataPayload = {
-      ...formData,
-      createdAt: new Date(formData.createdAt).toISOString(), //Date
-      tags: formData.tags.map(Number), //number[]
-      category: Number(formData.category), //number
-      pictures: formData.pictures.map((picture) => picture.url), //string[]
+      id: Number(id),
+      title: formData.title,
+      description: formData.description,
+      owner: formData.owner,
+      price: Number(formData.price),
+      location: formData.location,
+      createdAt: new Date(formData.createdAt).toISOString(),
+      categoryId: Number(formData.category),
+      tagIds: formData.tags.map(Number),
+      pictures: formData.pictures.map((pic) => pic.url),
     };
 
+    await updateAd({
+      variables: { data: dataPayload },
+      onCompleted: (response) => {
+        console.log("annonce modifié avec succès", response);
+        toast.success("Annonce modifiée avec succès");
+        navigate("/");
+      },
+      onError: (errors) => {
+        console.error(
+          "Error dans la tentative de modification de l'annonce",
+          errors
+        );
+        toast.error("Une erreur est survenue");
+      },
+      refetchQueries: [{ query: GET_ALL_ADS }],
+    });
     console.log("payload ", dataPayload);
-    // try {
-    //   await axios.put<FormPayload[]>(
-    //     `http://localhost:3000/ads/${id}`,
-    //     dataPayload
-    //   );
-
-    //   toast.success("🚀 Votre annonce a été modifiée avec succès !");
-    //   navigate("/");
-    // } catch (error) {
-    //   console.error("Error create ad", error);
-    //   toast.error(
-    //     "Une erreur est survenue lors de la modification de l'annonce"
-    //   );
-    // }
   };
 
-  //logs
-  // console.log("id", id);
-  // console.log("AdDetails Update  ==> ", adDetails);
-  useEffect(() => {
-    if (fetchAdDetails?.category?.id) {
-      setValue("category", fetchAdDetails.category.id);
-    }
-  }, [fetchAdDetails, setValue]);
-
-  useEffect(() => {
-    if (fetchAdDetails?.tags) {
-      setValue(
-        "tags",
-        fetchAdDetails.tags.map((tag) => tag.id)
-      );
-    }
-  }, [fetchAdDetails, setValue]);
-
   return (
-    <>
-      <form onSubmit={handleSubmit(onSubmit)}>
+    <div className="page-container">
+      <form onSubmit={handleSubmit(onSubmit)} className="form-content">
+        {/* titre */}
         <div className="form-group">
           <label htmlFor="title">Titre</label>
-          <input
-            {...register("title")}
-            id="title"
-            className="text-field"
-            defaultValue={fetchAdDetails?.title}
-          />
+          <input {...register("title")} id="title" className="text-field" />
           {errors.title && (
             <span className="error-message">{errors.title.message}</span>
           )}
         </div>
 
+        {/* description */}
         <div className="form-group">
           <label htmlFor="description">Description</label>
           <input
             {...register("description")}
             id="description"
             className="text-field"
-            defaultValue={fetchAdDetails?.description}
           />
           {errors.description && (
             <span className="error-message">{errors.description.message}</span>
           )}
         </div>
 
+        {/* auteur */}
         <div className="form-group">
           <label htmlFor="owner">Auteur</label>
-          <input
-            {...register("owner")}
-            id="owner"
-            className="text-field"
-            defaultValue={fetchAdDetails?.owner}
-          />
+          <input {...register("owner")} id="owner" className="text-field" />
           {errors.owner && (
             <span className="error-message">{errors.owner.message}</span>
           )}
         </div>
 
+        {/* prix */}
         <div className="form-group">
           <label htmlFor="price">Prix</label>
           <input
@@ -250,26 +163,26 @@ const UpdateAdPage = () => {
             id="price"
             className="text-field"
             type="number"
-            defaultValue={fetchAdDetails?.price}
           />
           {errors.price && (
             <span className="error-message">{errors.price.message}</span>
           )}
         </div>
 
+        {/* localisation */}
         <div className="form-group">
           <label htmlFor="location">Localisation</label>
           <input
             {...register("location")}
             id="location"
             className="text-field"
-            defaultValue={fetchAdDetails?.location}
           />
           {errors.location && (
             <span className="error-message">{errors.location.message}</span>
           )}
         </div>
 
+        {/* date de creation */}
         <div className="form-group">
           <label htmlFor="createdAt">Date de création</label>
           <input
@@ -277,13 +190,13 @@ const UpdateAdPage = () => {
             id="createdAt"
             className="text-field"
             type="date"
-            defaultValue={fetchAdDetails?.createdAt?.split("T")[0]}
           />
           {errors.createdAt && (
             <span className="error-message">{errors.createdAt.message}</span>
           )}
         </div>
 
+        {/* photo */}
         <div className="form-group">
           <button
             type="button"
@@ -299,7 +212,7 @@ const UpdateAdPage = () => {
                 {...register(`pictures.${index}.url`)}
                 id={`picture-${index}`}
                 className="text-field"
-                defaultValue={fetchAdDetails?.pictures?.[index]?.url}
+                // defaultValue={fetchAdDetails?.pictures?.[index]?.url}
               />
               <button type="button" onClick={() => remove(index)}>
                 Supprimer une photo
@@ -316,12 +229,14 @@ const UpdateAdPage = () => {
           )}
         </div>
 
+        {/* catégories */}
         <div className="form-group">
           <label htmlFor="category">Catégories</label>
           <select
             {...register("category")}
             id="category"
             className="text-field"
+            defaultValue={fetchAdDetails?.category.id}
           >
             <option value="" disabled>
               Sélectionner une catégorie...
@@ -337,7 +252,9 @@ const UpdateAdPage = () => {
           )}
         </div>
 
-        {/* <div className="form-group">
+        {/* tags */}
+
+        <div className="form-group">
           <label>Tags</label>
           <div className="tags-container">
             {allTags.map((tag) => (
@@ -347,20 +264,9 @@ const UpdateAdPage = () => {
                   value={tag.id}
                   id={`tag-${tag.id}`}
                   {...register("tags")}
-                  defaultChecked={fetchAdDetails?.tags?.some(
-                    (adTag) => adTag.id === tag.id
-                  )}
-                  onChange={(e) => {
-                    const selectedTags = getValues("tags") || [];
-                    if (e.target.checked) {
-                      setValue("tags", [...selectedTags, tag.id]); // Ajoute le tag
-                    } else {
-                      setValue(
-                        "tags",
-                        selectedTags.filter((id) => id !== tag.id)
-                      ); // Retire le tag
-                    }
-                  }}
+                  defaultChecked={fetchAdDetails?.tags
+                    ?.map((adTag) => adTag.id)
+                    .includes(tag.id)}
                 />
                 <label htmlFor={`tag-${tag.id}`}>{tag.name}</label>
               </div>
@@ -369,11 +275,11 @@ const UpdateAdPage = () => {
           {errors.tags && (
             <span className="error-message">{errors.tags.message}</span>
           )}
-        </div> */}
+        </div>
 
         <input type="submit" className="button" />
       </form>
-    </>
+    </div>
   );
 };
 
