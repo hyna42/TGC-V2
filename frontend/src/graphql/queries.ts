@@ -90,3 +90,17 @@ export const GET_TAG_BY_ID = gql`
     }
   }
 `;
+
+/* TAG queries */
+export const GET_ALL_CATEGORIES_AND_TAGS = gql`
+  query GetAllCategoriesAndTags {
+    getAllCategories {
+      id
+      title
+    }
+    getAllTags {
+      id
+      name
+    }
+  }
+`;

@@ -1,6 +1,5 @@
 // import React from "react";
 import axios from "axios";
-import { useEffect, useState } from "react";
 import { SubmitHandler, useForm, useFieldArray } from "react-hook-form";
 // import { AdFormProps } from "../components/AdCard";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -8,6 +7,11 @@ import { validate } from "../validation/validate";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import {
+  useCreateNewAdMutation,
+  useGetAllCategoriesAndTagsQuery,
+} from "../generated/graphql-types";
+import { GET_ALL_ADS } from "../graphql/queries";
 
 export type Category = {
   id: number;
@@ -25,48 +29,18 @@ export type FormPayload = {
   owner: string;
   price: number;
   location: string;
-  createdAt: string; //format ISO
+  // createdAt: string; //format ISO
   pictures: { url: string }[]; // Tableau d'URLs d'images
   category: number; // ID de la catégorie
   tags: number[]; // Tableau d'IDs de tags
 };
 
 const NewAddFormPage = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [tags, setTags] = useState<Tag[]>([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    //Récupérer les catégories
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get<Category[]>(
-          "http://localhost:3000/categories"
-        );
-        if (response.data) setCategories(response.data);
-        //   console.log("categories",categories);
-      } catch (error) {
-        console.log("error fetching categories", error);
-      }
-    };
+  const { data: getAllCategoriesAndTags } = useGetAllCategoriesAndTagsQuery();
 
-    //Récupérer les tags
-    const fetchTags = async () => {
-      try {
-        const response = await axios.get<Tag[]>("http://localhost:3000/tags");
-        if (response.data) setTags(response.data);
-        //   console.log("categories",categories);
-      } catch (error) {
-        console.log("error fetching tags", error);
-      }
-    };
-
-    fetchCategories();
-    fetchTags();
-  }, []);
-
-  // console.log("categories : ", categories);
-  // console.log("tags : ", tags);
+  const [createNewAd] = useCreateNewAdMutation();
 
   /************gestion du formulaire****************/
   const {
@@ -85,7 +59,7 @@ const NewAddFormPage = () => {
       owner: "auteur",
       price: 100,
       location: "Paris",
-      createdAt: "1992-04-24",
+      // createdAt: "1992-04-24",
       pictures: [{ url: "" }],
       tags: [],
     },
@@ -104,28 +78,36 @@ const NewAddFormPage = () => {
     console.log("formData ", formData);
 
     const dataPayload = {
-      ...formData,
-      createdAt: new Date(formData.createdAt).toISOString(), //Date
-      tags: formData.tags.map(Number), //number[]
-      category: Number(formData.category), //number
-      pictures: formData.pictures.map((picture) => picture.url), //string[]
+      title: formData.title,
+      description: formData.description,
+      owner: formData.owner,
+      price: Number(formData.price), 
+      location: formData.location,
+      tagIds: formData.tags.map((tag) => parseInt(tag.toString(), 10)),
+      categoryId: parseInt(formData.category.toString(), 10), 
+      pictures: formData.pictures.map((picture) => picture.url), 
     };
 
     console.log("payload ", dataPayload);
-    try {
-      await axios.post<FormPayload[]>("http://localhost:3000/ads", dataPayload);
 
-      toast.success("🚀 Votre annonce a été créée avec succès !");
-      navigate("/");
-    } catch (error) {
-      console.error("Error create ad", error);
-      toast.error("Une erreur est survenue lors de la création de l'annonce");
-    }
+    await createNewAd({
+      variables: { data: dataPayload },
+      onCompleted: () => {
+        toast.success("Annonce crée avec"), navigate("/");
+      },
+
+      onError: (error) => {
+        toast.error("Error dans la tentative de création de l'annonce"),
+          console.error("Error creation annonce", error);
+      },
+      refetchQueries: [{ query: GET_ALL_ADS }],
+    });
   };
 
   return (
     <div className="page-container">
       <form onSubmit={handleSubmit(onSubmit)} className="form-content">
+        {/* Titre */}
         <div className="form-group">
           <label>Titre</label>
           <input {...register("title")} className="text-field" />
@@ -134,6 +116,7 @@ const NewAddFormPage = () => {
           )}
         </div>
 
+        {/* description */}
         <div className="form-group">
           <label>Description</label>
           <input {...register("description")} className="text-field" />
@@ -142,6 +125,7 @@ const NewAddFormPage = () => {
           )}
         </div>
 
+        {/*Auteur */}
         <div className="form-group">
           <label>Auteur</label>
           <input {...register("owner")} className="text-field" />
@@ -150,6 +134,7 @@ const NewAddFormPage = () => {
           )}
         </div>
 
+        {/* Prix */}
         <div className="form-group">
           <label>Prix</label>
           <input {...register("price")} className="text-field" type="number" />
@@ -158,6 +143,7 @@ const NewAddFormPage = () => {
           )}
         </div>
 
+        {/* Localisation */}
         <div className="form-group">
           <label>Localisation</label>
           <input {...register("location")} className="text-field" />
@@ -166,7 +152,8 @@ const NewAddFormPage = () => {
           )}
         </div>
 
-        <div className="form-group">
+        {/* Date */}
+        {/* <div className="form-group">
           <label>Date de création</label>
           <input
             {...register("createdAt")}
@@ -176,8 +163,9 @@ const NewAddFormPage = () => {
           {errors.createdAt && (
             <span className="error-message">{errors.createdAt.message}</span>
           )}
-        </div>
+        </div> */}
 
+        {/* Photo */}
         <div className="form-group">
           <button
             type="button"
@@ -209,11 +197,12 @@ const NewAddFormPage = () => {
           )}
         </div>
 
+        {/* Catégories */}
         <div className="form-group">
           <label>Catégories</label>
           <select {...register("category")} className="text-field">
             <option value="">...</option>
-            {categories.map((category) => (
+            {getAllCategoriesAndTags?.getAllCategories.map((category) => (
               <option value={category.id} key={category.id}>
                 {category.title}
               </option>
@@ -224,10 +213,11 @@ const NewAddFormPage = () => {
           )}
         </div>
 
+        {/* Tags */}
         <div className="form-group">
           <label>Tags</label>
           <div className="tags-container">
-            {tags.map((tag) => (
+            {getAllCategoriesAndTags?.getAllTags.map((tag) => (
               <div key={tag.id} className="tag-item">
                 <input
                   type="checkbox"

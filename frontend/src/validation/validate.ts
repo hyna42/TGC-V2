@@ -19,9 +19,9 @@ export const validate = object().shape({
     .required("La localisation est obligatoire")
     .min(3, "La localisation doit contenir au moins 3 caractères")
     .max(100, "La localisation ne peut pas dépasser 100 caractères"),
-  createdAt: string()
-    .required("La date de création est obligatoire")
-    .typeError("La date doit être valide"),
+  // createdAt: string()
+  //   .required("La date de création est obligatoire")
+  //   .typeError("La date doit être valide"),
   pictures: array()
     .of(
       object().shape({
