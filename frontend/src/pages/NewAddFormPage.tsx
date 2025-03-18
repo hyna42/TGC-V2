@@ -152,19 +152,6 @@ const NewAddFormPage = () => {
           )}
         </div>
 
-        {/* Date */}
-        {/* <div className="form-group">
-          <label>Date de création</label>
-          <input
-            {...register("createdAt")}
-            className="text-field"
-            type="date"
-          />
-          {errors.createdAt && (
-            <span className="error-message">{errors.createdAt.message}</span>
-          )}
-        </div> */}
-
         {/* Photo */}
         <div className="form-group">
           <button
