@@ -8,7 +8,8 @@ import { ToastContainer } from "react-toastify";
 import NewCategoryForm from "./pages/NewCategory";
 import SearchAds from "./components/SearchAds";
 import UpdateAdPage from "./pages/UpdateAdPage";
-import UploadAdImg from "./components/UploadAdImg";
+import SingleFileUploader from "./pages/UploadAdImg";
+// import UploadAdImg from "./components/UploadAdImg";
 
 function App() {
   return (
@@ -20,18 +21,19 @@ function App() {
           <Route path="ad/new" element={<NewAddFormPage />} />
 
           <Route path="ad/category" element={<NewCategoryForm />} />
-          
+
           <Route path="ad/:id" element={<AdDetailsPage />} />
 
           <Route path="ad/search" element={<SearchAds />} />
 
-          <Route path="img/upload" element={<UploadAdImg />} />
+          {/* <Route path="img/upload" element={<UploadAdImg />} /> */}
+
+          <Route path="upload-img" element={<SingleFileUploader />} />
 
           <Route path="ad/update/:id" element={<UpdateAdPage />} />
-          
         </Route>
       </Routes>
-      <ToastContainer theme="colored" autoClose={2000}/>
+      <ToastContainer theme="colored" autoClose={2000} />
     </>
   );
 }
