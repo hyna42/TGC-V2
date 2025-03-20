@@ -29,7 +29,7 @@ app.post("/img", upload.single("file"), (req: any, res: Response) => {
     } else {
       res
         .status(201)
-        .json({ status: "success", filename: "/img/" + req.file.filename });
+        .json({ status: true, filename: "/img/" + req.file.filename });
     }
   });
 });

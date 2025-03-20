@@ -49,6 +49,7 @@ const NewAddFormPage = () => {
     control,
     formState: { errors },
     // reset,
+    setValue,
   } = useForm<FormPayload>({
     defaultValues: {
       title: "Titre par défaut",
@@ -73,19 +74,17 @@ const NewAddFormPage = () => {
   });
 
   const onSubmit: SubmitHandler<FormPayload> = async (formData) => {
-    //préparer le payload
-
     console.log("formData ", formData);
 
     const dataPayload = {
       title: formData.title,
       description: formData.description,
       owner: formData.owner,
-      price: Number(formData.price), 
+      price: Number(formData.price),
       location: formData.location,
       tagIds: formData.tags.map((tag) => parseInt(tag.toString(), 10)),
-      categoryId: parseInt(formData.category.toString(), 10), 
-      pictures: formData.pictures.map((picture) => picture.url), 
+      categoryId: parseInt(formData.category.toString(), 10),
+      pictures: formData.pictures.map((picture) => picture.url),
     };
 
     console.log("payload ", dataPayload);
@@ -93,16 +92,40 @@ const NewAddFormPage = () => {
     await createNewAd({
       variables: { data: dataPayload },
       onCompleted: () => {
-        toast.success("Annonce crée avec"), navigate("/");
+        toast.success("Annonce crée avec");
+        navigate("/");
       },
 
       onError: (error) => {
-        toast.error("Error dans la tentative de création de l'annonce"),
-          console.error("Error creation annonce", error);
+        toast.error("Error dans la tentative de création de l'annonce");
+        console.error("Error creation annonce", error);
       },
       refetchQueries: [{ query: GET_ALL_ADS }],
     });
   };
+
+  const handleChangeImg = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    if (!e.target.files || !e.target.files[0]) return;
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+    console.log("test0");
+    try {
+      const response = await axios.post("/img", formData);
+      console.log("test1");
+      // if (!response.data.success) return;
+      // Mettre à jour le champ correspondant dans le formulaire
+      console.log('filename ==>',response.data.filename)
+      setValue(`pictures.${index}.url`, response.data.filename);
+    } catch (error) {
+      console.error("Erreur lors de l'upload de l'image", error);
+    }
+  };
+
+
 
   return (
     <div className="page-container">
@@ -164,12 +187,14 @@ const NewAddFormPage = () => {
           {fields.map((field, index) => (
             <div key={field.id}>
               <input
-                type="text"
-                {...register(`pictures.${index}.url`)}
-                className="text-field"
+                type="file"
+                // {...register(`pictures.${index}.url`)}
+                // className="text-field"
+                onChange={(e) => handleChangeImg(e, index)}
+                key={field.id} 
               />
               <button type="button" onClick={() => remove(index)}>
-                Supprimer une photo
+              ❌ Supprimer
               </button>
               {/* Affichage des erreurs spécifiques pour ce champ */}
               {errors.pictures?.[index]?.url && (

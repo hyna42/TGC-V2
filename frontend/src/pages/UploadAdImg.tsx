@@ -35,7 +35,7 @@ const UploadAdImg = () => {
 
     setUploadStatus("⏳ Envoi en cours...");
 
-    let formData = new FormData();
+    const formData = new FormData();
     formData.append("file", image.data);
 
     try {
@@ -47,6 +47,7 @@ const UploadAdImg = () => {
       setUploadStatus("❌ Échec de l'upload.");
     }
   };
+  
 
   // ✅ Supprimer l'image sélectionnée
   const handleDeleteImg = () => {
