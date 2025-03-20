@@ -10,8 +10,9 @@ import {
 } from "../generated/graphql-types";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { GET_ALL_ADS } from "../graphql/queries";
+import axios from "axios";
 
 export type FormPayload = {
   title: string;
@@ -54,6 +55,7 @@ const UpdateAdPage = () => {
 
   const [updateAd] = useUpdateAdMutation();
   // console.log('tag',allTags)
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 
   const {
     register,
@@ -81,8 +83,41 @@ const UpdateAdPage = () => {
         "pictures",
         fetchAdDetails.pictures?.map((pic) => ({ url: pic.url })) || []
       );
+      setPreviewUrls(fetchAdDetails.pictures?.map((pic) => pic.url) || []);
     }
   }, [fetchAdDetails, setValue]);
+
+  const handleChangeImg = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    if (!e.target.files || !e.target.files[0]) return;
+    const file = e.target.files[0];
+
+    const allowedFormats = ["image/jpeg", "image/png", "image/gif"];
+    if (!allowedFormats.includes(file.type)) {
+      toast.error("Formats autorisés : jpg, jpeg, et png");
+      throw new Error("Format autorisé : jpg, jpeg, et png");
+    }
+
+    const previewUrl = URL.createObjectURL(file);
+    setPreviewUrls((prev) => {
+      const updatedPreviews = [...prev];
+      updatedPreviews[index] = previewUrl;
+      return updatedPreviews;
+    });
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await axios.post("/img", formData);
+      if (!response.data.filename) return;
+      setValue(`pictures.${index}.url`, response.data.filename);
+    } catch (error) {
+      console.error("Erreur lors de l'upload de l'image", error);
+    }
+  };
 
   const onSubmit: SubmitHandler<FormPayload> = async (formData) => {
     //préparer le payload
@@ -205,28 +240,72 @@ const UpdateAdPage = () => {
           >
             Ajouter une photo
           </button>
-          {fields.map((field, index) => (
-            <div key={field.id}>
-              <input
-                type="text"
-                {...register(`pictures.${index}.url`)}
-                id={`picture-${index}`}
-                className="text-field"
-                // defaultValue={fetchAdDetails?.pictures?.[index]?.url}
-              />
-              <button type="button" onClick={() => remove(index)}>
-                Supprimer une photo
-              </button>
-              {errors.pictures?.[index]?.url && (
-                <span className="error-message">
-                  {errors.pictures[index]?.url?.message}
-                </span>
-              )}
-            </div>
-          ))}
-          {errors.pictures && (
-            <span className="error-message">{errors.pictures.message}</span>
-          )}
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "10px",
+              marginTop: "10px",
+            }}
+          >
+            {fields.map((field, index) => (
+              <div
+                key={field.id}
+                style={{
+                  width: "100px",
+                  height: "150px",
+                  borderRadius: "4px",
+                  overflow: "hidden",
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                  position: "relative",
+                }}
+              >
+                {!previewUrls[index] && (
+                  <input
+                    type="file"
+                    onChange={(e) => handleChangeImg(e, index)}
+                    style={{ display: "block" }}
+                  />
+                )}
+                {previewUrls[index] && (
+                  <img
+                    src={previewUrls[index]}
+                    alt="Preview"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      cursor: "pointer",
+                    }}
+                  />
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    remove(index);
+                    setPreviewUrls((prev) =>
+                      prev.filter((_, i) => i !== index)
+                    );
+                  }}
+                  style={{
+                    position: "absolute",
+                    bottom: "5px",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    padding: "2px 8px",
+                    fontSize: "12px",
+                    backgroundColor: "#ff4444",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "3px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Supprimer
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* catégories */}

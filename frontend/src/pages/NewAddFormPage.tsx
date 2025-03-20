@@ -125,6 +125,7 @@ const NewAddFormPage = () => {
 
     const allowedFormats = ["image/jpeg", "image/png", "image/gif"];
     if (!allowedFormats.includes(file.type)) {
+      toast.error("Formats autorisés : jpg, jpeg, et png");
       throw new Error("Format autorisé : jpg, jpeg, et png");
     }
     const formData = new FormData();
