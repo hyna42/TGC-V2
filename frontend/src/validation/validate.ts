@@ -26,8 +26,11 @@ export const validate = object().shape({
     .of(
       object().shape({
         url: string()
-          .url("L'URL de l'image doit être valide")
-          .required("Une URL est obligatoire"),
+          .matches(
+            /\.(jpg|jpeg|png)$/i,
+            "Le fichier doit être une image valide (jpg, jpeg, png, gif)"
+          )
+          .required("Une image est obligatoire"),
       })
     )
     .required("Les images sont obligatoires")

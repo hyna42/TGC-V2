@@ -12,6 +12,7 @@ import {
   useGetAllCategoriesAndTagsQuery,
 } from "../generated/graphql-types";
 import { GET_ALL_ADS } from "../graphql/queries";
+import { useState } from "react";
 
 export type Category = {
   id: number;
@@ -41,6 +42,9 @@ const NewAddFormPage = () => {
   const { data: getAllCategoriesAndTags } = useGetAllCategoriesAndTagsQuery();
 
   const [createNewAd] = useCreateNewAdMutation();
+
+  // ✅ État pour stocker les URL de prévisualisation
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 
   /************gestion du formulaire****************/
   const {
@@ -110,22 +114,32 @@ const NewAddFormPage = () => {
   ) => {
     if (!e.target.files || !e.target.files[0]) return;
     const file = e.target.files[0];
+
+    // ✅ Création d'une prévisualisation instantanée
+    const previewUrl = URL.createObjectURL(file);
+    setPreviewUrls((prev) => {
+      const updatedPreviews = [...prev];
+      updatedPreviews[index] = previewUrl;
+      return updatedPreviews;
+    });
+
+    const allowedFormats = ["image/jpeg", "image/png", "image/gif"];
+    if (!allowedFormats.includes(file.type)) {
+      throw new Error("Format autorisé : jpg, jpeg, et png");
+    }
     const formData = new FormData();
     formData.append("file", file);
-    console.log("test0");
+
     try {
       const response = await axios.post("/img", formData);
-      console.log("test1");
-      // if (!response.data.success) return;
+      if (!response.data.filename) return;
       // Mettre à jour le champ correspondant dans le formulaire
-      console.log('filename ==>',response.data.filename)
+      console.log("filename ==>", response.data.filename);
       setValue(`pictures.${index}.url`, response.data.filename);
     } catch (error) {
       console.error("Erreur lors de l'upload de l'image", error);
     }
   };
-
-
 
   return (
     <div className="page-container">
@@ -184,26 +198,87 @@ const NewAddFormPage = () => {
           >
             Ajouter une photo
           </button>
-          {fields.map((field, index) => (
-            <div key={field.id}>
-              <input
-                type="file"
-                // {...register(`pictures.${index}.url`)}
-                // className="text-field"
-                onChange={(e) => handleChangeImg(e, index)}
-                key={field.id} 
-              />
-              <button type="button" onClick={() => remove(index)}>
-              ❌ Supprimer
-              </button>
-              {/* Affichage des erreurs spécifiques pour ce champ */}
-              {errors.pictures?.[index]?.url && (
-                <span className="error-message">
-                  {errors.pictures[index]?.url?.message}
-                </span>
-              )}
-            </div>
-          ))}
+
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "10px",
+              marginTop: "10px",
+            }}
+          >
+            {fields.map((field, index) => (
+              <div key={field.id} style={{ position: "relative" }}>
+                {/* Input fichier caché si l'image est déjà uploadée */}
+                {!previewUrls[index] && (
+                  <input
+                    type="file"
+                    onChange={(e) => handleChangeImg(e, index)}
+                    style={{ display: "block" }}
+                  />
+                )}
+
+                {/* Prévisualisation de l'image */}
+                {previewUrls[index] && (
+                  <div
+                    style={{
+                      width: "100px",
+                      height: "150px",
+                      borderRadius: "4px",
+                      overflow: "hidden",
+                      boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                      position: "relative",
+                    }}
+                  >
+                    <img
+                      src={previewUrls[index]}
+                      alt="Preview"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        cursor: "pointer",
+                      }}
+                    />
+
+                    {/* Bouton de suppression */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        remove(index);
+                        setPreviewUrls((prev) =>
+                          prev.filter((_, i) => i !== index)
+                        );
+                      }}
+                      style={{
+                        position: "absolute",
+                        bottom: "5px",
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        padding: "2px 8px",
+                        fontSize: "12px",
+                        backgroundColor: "#ff4444",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "3px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Supprimer
+                    </button>
+                  </div>
+                )}
+
+                {/* Affichage des erreurs */}
+                {errors.pictures?.[index]?.url && (
+                  <span className="error-message">
+                    {errors.pictures[index]?.url?.message}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+
           {errors.pictures && (
             <span className="error-message">{errors.pictures.message}</span>
           )}
