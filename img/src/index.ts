@@ -4,6 +4,7 @@ import fs from "fs";
 import path from "path";
 
 const app = express();
+// app.use("/img", express.static(path.join(__dirname, "../uploads")));
 const port = 4000;
 
 // Formats autorisés
@@ -30,6 +31,10 @@ const upload = multer({
   },
 });
 
+app.get("/", (_req, res) => {
+  res.send("Healthcheck Okay");
+});
+
 app.post("/img", (req: Request, res: Response) => {
   upload.single("file")(req, res, (err) => {
     if (err) {
@@ -51,6 +56,22 @@ app.post("/img", (req: Request, res: Response) => {
         .json({ status: true, filename: "/img/" + req.file?.filename });
     });
     return;
+  });
+});
+
+app.get("/img/:filename", (req, res) => {
+  let file = path.join(__dirname + "/../uploads", req.params.filename);
+  console.log("file", file);
+  fs.readFile(file, (err, content) => {
+    if (err) {
+      res.writeHead(404, { "Content-Type": "text" });
+      res.write("File Not Found!");
+      res.end();
+    } else {
+      res.writeHead(200, { "Content-Type": "application/octet-stream" });
+      res.write(content);
+      res.end();
+    }
   });
 });
 

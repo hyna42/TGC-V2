@@ -19,5 +19,7 @@ COPY uploads uploads
 
 COPY tsconfig.json tsconfig.json
 
+COPY clean.ts clean.ts
+
 # Commande à exécuter pour démarrer le backend
-CMD ["npm","run","start"]
+CMD ["npm","run","start","clean"]
