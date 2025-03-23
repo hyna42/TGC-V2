@@ -9,6 +9,8 @@ import NewCategoryForm from "./pages/NewCategory";
 import SearchAds from "./components/SearchAds";
 import UpdateAdPage from "./pages/UpdateAdPage";
 import SingleFileUploader from "./pages/UploadAdImg";
+import LoginPage from "./pages/LoginPage";
+import LogoutPage from "./pages/LogoutPage";
 // import UploadAdImg from "./components/UploadAdImg";
 
 function App() {
@@ -26,11 +28,13 @@ function App() {
 
           <Route path="ad/search" element={<SearchAds />} />
 
-          {/* <Route path="img/upload" element={<UploadAdImg />} /> */}
-
           <Route path="upload-img" element={<SingleFileUploader />} />
 
           <Route path="ad/update/:id" element={<UpdateAdPage />} />
+
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/logout" element={<LogoutPage />} />
+          
         </Route>
       </Routes>
       <ToastContainer theme="colored" autoClose={2000} />

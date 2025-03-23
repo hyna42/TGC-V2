@@ -15,6 +15,7 @@ import { Category } from "./Category";
 import { Tag } from "./Tag";
 import { Field, ObjectType } from "type-graphql";
 import { Picture } from "./Picture";
+import { User } from "./User";
 
 @ObjectType()
 @Entity()
@@ -66,8 +67,16 @@ export class Ad extends BaseEntity {
   category: Category;
 
   //Relation Many-To-Many avec les Tags
-  @Field(()=>[Tag],  { nullable: true })
-  @ManyToMany(() => Tag, (tag) => tag.ads, { eager: true,})
+  @Field(() => [Tag], { nullable: true })
+  @ManyToMany(() => Tag, (tag) => tag.ads, { eager: true })
   @JoinTable()
   tags: Tag[];
+
+  //Relation OneToOne avec User
+  @Field(() => User)
+  @ManyToOne(() => User, (user) => user.ads, {
+    eager: true,
+    onDelete: "CASCADE",
+  })
+  user: User;
 }

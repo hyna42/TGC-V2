@@ -1,25 +1,22 @@
 import { Link, useNavigate } from "react-router-dom";
 import Category from "./Category";
-import React, {useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 
 import { fetchAdsUsingQueryParams } from "../utils/adSerices";
-import {  useGetAllCategoriesQuery } from "../generated/graphql-types";
+import { useGetAllCategoriesQuery } from "../generated/graphql-types";
 
 const Header = () => {
-  
   const navigate = useNavigate();
-  // const [categories, setCategories] = useState<CategoryProps[]>([]);
-  const [searchValue, setSearchValue] = useState(""); //garder la valeur du champ de recherche
-  const inputRef = useRef<HTMLInputElement>(null); // 🔥 Référence de l'input
+  const [searchValue, setSearchValue] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const { data: fetchCategoriesData } = useGetAllCategoriesQuery();
   const categories = fetchCategoriesData?.getAllCategories || [];
-  // console.log("allCat", categories)
 
   // 🔥 Gestion du focus uniquement au clic
   const handleInputClick = () => {
     if (inputRef.current) {
-      inputRef.current.focus(); // Focus sur l'input uniquement lors du clic
+      inputRef.current.focus();
     }
   };
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,17 +76,19 @@ const Header = () => {
             <span className="mobile-short-label">Publier</span>
             <span className="desktop-long-label">Publier une annonce</span>
           </Link>
-        </div>
 
-        {/* <Link to="/dashboard">Dashboard</Link>; */}
+          <Link to="/login" className="button button-primary link-button">
+            <span>Connexion</span>
+          </Link>
+
+          <Link to="/logout" className="button button-primary link-button">
+            <span>Déconnexion</span>
+          </Link>
+        </div>
 
         <nav className="categories-navigation">
           {categories.map((category) => (
-            <Category
-              key={category.id}
-              // id={category.id}
-              title={category.title}
-            />
+            <Category key={category.id} title={category.title} />
           ))}
         </nav>
       </header>

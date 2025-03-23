@@ -31,6 +31,7 @@ export type Ad = {
   tags?: Maybe<Array<Tag>>;
   title: Scalars['String']['output'];
   updatedAt: Scalars['DateTimeISO']['output'];
+  user: User;
 };
 
 export type AdInput = {
@@ -181,6 +182,14 @@ export type UpdateCategroyInput = {
 export type UpdateTagInput = {
   id: Scalars['Float']['input'];
   name: Scalars['String']['input'];
+};
+
+export type User = {
+  __typename?: 'User';
+  ads?: Maybe<Array<Ad>>;
+  email: Scalars['String']['output'];
+  hashedPassword: Scalars['String']['output'];
+  id: Scalars['Float']['output'];
 };
 
 export type DeleteAdMutationVariables = Exact<{
