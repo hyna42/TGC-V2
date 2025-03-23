@@ -28,7 +28,7 @@ import "dotenv/config";
     if (!response.rowCount) return;
     // 1 liste des urls presents en DB
     const dbUrls = response.rows.map((item) => item.url.slice(5));
-    console.log("dbURLs", dbUrls);
+    // console.log("dbURLs", dbUrls);
 
     //2 liste des urls dans le dossier uploads du service img
     fs.readdir(
@@ -37,7 +37,7 @@ import "dotenv/config";
         if (err) {
           return console.log("Unable to scan directory: " + err);
         }
-        console.log("uploadsURLs ==> ", files);
+        // console.log("uploadsURLs ==> ", files);
         //supprimer le fichier s'il nest pas dans la bd
         let count = 0;
         files.forEach(function (file) {
@@ -54,7 +54,7 @@ import "dotenv/config";
             );
           }
         });
-        console.log(`🗑️ ${count} File has been successfully removed.`);
+        if(count)console.log(`❌ ${count} unused files sucessfully removed from /uploads.🗑️🗑️🗑️`);
       }
     );
   } catch (err) {
