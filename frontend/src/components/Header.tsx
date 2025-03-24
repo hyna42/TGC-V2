@@ -78,11 +78,11 @@ const Header = () => {
           </Link>
 
           <Link to="/login" className="button button-primary link-button">
-            <span>Connexion</span>
+            <span>Se connecter</span>
           </Link>
 
           <Link to="/logout" className="button button-primary link-button">
-            <span>Déconnexion</span>
+            <span>S'inscrire</span>
           </Link>
         </div>
 

@@ -10,7 +10,7 @@ import SearchAds from "./components/SearchAds";
 import UpdateAdPage from "./pages/UpdateAdPage";
 import SingleFileUploader from "./pages/UploadAdImg";
 import LoginPage from "./pages/LoginPage";
-import LogoutPage from "./pages/LogoutPage";
+import SignUpPage from "./pages/SignUpPage";
 // import UploadAdImg from "./components/UploadAdImg";
 
 function App() {
@@ -33,8 +33,7 @@ function App() {
           <Route path="ad/update/:id" element={<UpdateAdPage />} />
 
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/logout" element={<LogoutPage />} />
-          
+          <Route path="/logout" element={<SignUpPage />} />
         </Route>
       </Routes>
       <ToastContainer theme="colored" autoClose={2000} />

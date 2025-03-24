@@ -56,3 +56,10 @@ export const UPDATE_TAG = gql`
     updateTag(data: $data)
   }
 `;
+
+/* USER mutations */
+export const SIGN_UP = gql`
+  mutation Signup($data: UserInput!) {
+    signup(data: $data)
+  }
+`;
