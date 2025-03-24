@@ -6,13 +6,14 @@ import { buildSchema } from "type-graphql";
 import AdResolver from "./resolvers/AdResolver";
 import CategoryResolver from "./resolvers/CategoryResolver";
 import TagResolver from "./resolvers/TagResolver";
+import UserResolver from "./resolvers/UserResolver";
 
 const start = async () => {
   await datasource.initialize();
 
   const schema = await buildSchema({
-    resolvers: [AdResolver, CategoryResolver, TagResolver],
-    // resolvers: [AdResolver, CategoryResolver, TagResolver],
+    resolvers: [AdResolver, CategoryResolver, TagResolver, UserResolver],
+    
   });
 
   const server = new ApolloServer({
