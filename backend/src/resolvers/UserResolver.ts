@@ -20,7 +20,7 @@ class UserResolver {
 
   //connexion : login
   // @Mutation(() => User)
-  // async getUserById(@Arg("id") id: number) {
+  // async login(@Arg("data") id: number) {
   //   return User.findOneBy({ id });
   // }
 

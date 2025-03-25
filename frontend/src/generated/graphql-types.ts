@@ -60,11 +60,10 @@ export type Mutation = {
   createCategory: Category;
   createNewAd: Scalars['String']['output'];
   createTag: Tag;
-  createUser: Scalars['String']['output'];
   deleteAd: Scalars['String']['output'];
   deleteCategory: Scalars['String']['output'];
   deleteTag: Scalars['String']['output'];
-  getUserById: User;
+  signup: Scalars['String']['output'];
   updateAd: Scalars['String']['output'];
   updateCategory: Scalars['String']['output'];
   updateTag: Scalars['String']['output'];
@@ -86,11 +85,6 @@ export type MutationCreateTagArgs = {
 };
 
 
-export type MutationCreateUserArgs = {
-  data: UserInput;
-};
-
-
 export type MutationDeleteAdArgs = {
   id: Scalars['Float']['input'];
 };
@@ -106,8 +100,8 @@ export type MutationDeleteTagArgs = {
 };
 
 
-export type MutationGetUserByIdArgs = {
-  id: Scalars['Float']['input'];
+export type MutationSignupArgs = {
+  data: UserInput;
 };
 
 
@@ -271,6 +265,13 @@ export type UpdateTagMutationVariables = Exact<{
 
 
 export type UpdateTagMutation = { __typename?: 'Mutation', updateTag: string };
+
+export type SignupMutationVariables = Exact<{
+  data: UserInput;
+}>;
+
+
+export type SignupMutation = { __typename?: 'Mutation', signup: string };
 
 export type GetAllAdsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -599,6 +600,37 @@ export function useUpdateTagMutation(baseOptions?: Apollo.MutationHookOptions<Up
 export type UpdateTagMutationHookResult = ReturnType<typeof useUpdateTagMutation>;
 export type UpdateTagMutationResult = Apollo.MutationResult<UpdateTagMutation>;
 export type UpdateTagMutationOptions = Apollo.BaseMutationOptions<UpdateTagMutation, UpdateTagMutationVariables>;
+export const SignupDocument = gql`
+    mutation Signup($data: UserInput!) {
+  signup(data: $data)
+}
+    `;
+export type SignupMutationFn = Apollo.MutationFunction<SignupMutation, SignupMutationVariables>;
+
+/**
+ * __useSignupMutation__
+ *
+ * To run a mutation, you first call `useSignupMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSignupMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [signupMutation, { data, loading, error }] = useSignupMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useSignupMutation(baseOptions?: Apollo.MutationHookOptions<SignupMutation, SignupMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SignupMutation, SignupMutationVariables>(SignupDocument, options);
+      }
+export type SignupMutationHookResult = ReturnType<typeof useSignupMutation>;
+export type SignupMutationResult = Apollo.MutationResult<SignupMutation>;
+export type SignupMutationOptions = Apollo.BaseMutationOptions<SignupMutation, SignupMutationVariables>;
 export const GetAllAdsDocument = gql`
     query GetAllAds {
   getAllAds {
