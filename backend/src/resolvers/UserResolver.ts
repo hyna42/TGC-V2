@@ -1,9 +1,26 @@
-import { Arg, Ctx, Mutation, Resolver } from "type-graphql";
+import {
+  Arg,
+  Ctx,
+  Field,
+  Mutation,
+  ObjectType,
+  Query,
+  Resolver,
+} from "type-graphql";
 import { User } from "../entities/User";
 import UserInput from "../inputs/UserInput";
 import * as argon2 from "argon2";
 import "dotenv/config";
 import jwt, { Secret } from "jsonwebtoken";
+
+@ObjectType()
+class UserInfos {
+  @Field({ nullable: true })
+  email?: string;
+
+  @Field()
+  isLoggedIn: boolean;
+}
 
 @Resolver(User)
 class UserResolver {
@@ -32,12 +49,12 @@ class UserResolver {
     if (!isPasswordCorrect) throw new Error("Identifiants incorrects");
 
     //générer un JWT token
-    if (!process.env.JWT_KEY) {
-      throw new Error("JWT_KEY manquant dans .env");
+    if (!process.env.JWT_SECRET_KEY) {
+      throw new Error("JWT_SECRET_KEY manquant dans .env");
     }
     const token = jwt.sign(
       { email: user.email },
-      process.env.JWT_KEY as Secret
+      process.env.JWT_SECRET_KEY as Secret
     );
 
     //ajouter un cookie dans la réponse http
@@ -54,6 +71,17 @@ class UserResolver {
       `token=; Secure; HttpOnly;expires=${new Date(Date.now()).toUTCString()}`
     );
     return "logged out";
+  }
+
+  //recupère les informations de l'utilisateur connecté
+  @Query(() => UserInfos)
+  async Me(@Ctx() context: any) {
+    if (context.email) {
+      console.log("context.email", context.email);
+      return { isLoggedIn: true, email: context.email };
+    } else {
+      return { isLoggedIn: false };
+    }
   }
 
   //deleteUser == supprimer mon compte

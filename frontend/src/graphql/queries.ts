@@ -104,3 +104,13 @@ export const GET_ALL_CATEGORIES_AND_TAGS = gql`
     }
   }
 `;
+
+/* USER queries */
+export const IS_LOGGED_IN = gql`
+  query Me {
+    Me {
+      email
+      isLoggedIn
+    }
+  }
+`;

@@ -12,8 +12,8 @@ import jwt, { Secret } from "jsonwebtoken";
 import * as cookie from "cookie";
 
 const start = async () => {
-  if (!process.env.JWT_KEY) {
-    throw new Error("JWT_KEY manquant dans .env");
+  if (!process.env.JWT_SECRET_KEY) {
+    throw new Error("JWT_SECRET_KEY manquant dans .env");
   }
   await datasource.initialize();
 

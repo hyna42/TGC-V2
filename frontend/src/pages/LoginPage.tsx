@@ -2,27 +2,41 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 import "react-toastify/dist/ReactToastify.css";
-import { object, string } from "yup";
-
-const loginSchema = object().shape({
-  email: string().email("Email invalide").required("L'email est obligatoire"),
-  password: string()
-    .min(8, "Le mot de passe doit contenir au moins 8 caractères")
-    .required("Le mot de passe est obligatoire"),
-});
+import { loginSchema } from "../validation/loginSchema";
+import { useLoginMutation } from "../generated/graphql-types";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
+  const [login] = useLoginMutation();
+  const navigate = useNavigate();
   const {
     register,
+    handleSubmit,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(loginSchema),
     mode: "onChange",
   });
 
+  const onSubmit = (data: { email: string; password: string }) => {
+    console.log(data);
+    login({
+      variables: { data: { email: data.email, hashedPassword: data.password } },
+      onCompleted: () => {
+        toast.success("Loggin successful");
+        navigate("/");
+      },
+      onError: (error) => {
+        console.error("Errro try login", error);
+        toast.error("Identifants invalides");
+      },
+    });
+  };
+
   return (
     <div className="page-container">
-      <form className="form-content">
+      <form className="form-content" onSubmit={handleSubmit(onSubmit)}>
         <h2>Connexion</h2>
 
         <div className="form-group">
