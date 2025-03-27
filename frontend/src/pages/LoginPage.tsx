@@ -6,6 +6,7 @@ import { loginSchema } from "../validation/loginSchema";
 import { useLoginMutation } from "../generated/graphql-types";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { IS_LOGGED_IN } from "../graphql/queries";
 
 const LoginPage = () => {
   const [login] = useLoginMutation();
@@ -27,6 +28,7 @@ const LoginPage = () => {
         toast.success("Loggin successful");
         navigate("/");
       },
+      refetchQueries: [{ query: IS_LOGGED_IN }],
       onError: (error) => {
         console.error("Errro try login", error);
         toast.error("Identifants invalides");

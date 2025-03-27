@@ -4,6 +4,7 @@ import {
   useGetAllAdsQuery,
 } from "../generated/graphql-types";
 import { GET_ALL_ADS } from "../graphql/queries";
+import { useIsLoggedIn } from "../utils/user";
 
 const RecentAds = () => {
   const { data: fetchAdsData } = useGetAllAdsQuery();
@@ -21,6 +22,8 @@ const RecentAds = () => {
     }
   };
 
+    const isAuth = useIsLoggedIn()
+
   console.log("ads", ads);
   return (
     <>
@@ -36,14 +39,14 @@ const RecentAds = () => {
                 price={ad.price}
                 category={ad.category}
               />
-              <button
+              {isAuth &&<button
                 className="button delete-ad"
                 onClick={() => {
                   handleDelete(ad.id);
                 }}
               >
                 Supprimer
-              </button>
+              </button>}
             </div>
           ))}
         </section>

@@ -3,10 +3,19 @@ import Category from "./Category";
 import React, { useRef, useState } from "react";
 
 import { fetchAdsUsingQueryParams } from "../utils/adSerices";
-import { useGetAllCategoriesQuery } from "../generated/graphql-types";
+import {
+  useGetAllCategoriesQuery,
+  useLogoutMutation,
+} from "../generated/graphql-types";
+import { IS_LOGGED_IN } from "../graphql/queries";
+import { useIsLoggedIn } from "../utils/user";
 
 const Header = () => {
   const navigate = useNavigate();
+  const [logout] = useLogoutMutation();
+  const isAuth = useIsLoggedIn()
+
+  //TODO update serarch feat
   const [searchValue, setSearchValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -35,6 +44,7 @@ const Header = () => {
     }
   };
 
+  
   return (
     <>
       <header className="header">
@@ -72,18 +82,32 @@ const Header = () => {
             </button>
           </form>
 
-          <Link to="/ad/new" className="button link-button">
-            <span className="mobile-short-label">Publier</span>
-            <span className="desktop-long-label">Publier une annonce</span>
-          </Link>
+          {isAuth ? (
+            <>
+              <Link to="/ad/new" className="button link-button">
+                <span className="mobile-short-label">Publier</span>
+                <span className="desktop-long-label">Publier une annonce</span>
+              </Link>
+              <button
+                className="button button-primary link-button"
+                onClick={() => {
+                  logout({ refetchQueries: [{ query: IS_LOGGED_IN }] });
+                }}
+              >
+                <span>Se déconnecter</span>
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="button button-primary link-button">
+                <span>Connexion</span>
+              </Link>
 
-          <Link to="/login" className="button button-primary link-button">
-            <span>Se connecter</span>
-          </Link>
-
-          <Link to="/logout" className="button button-primary link-button">
-            <span>S'inscrire</span>
-          </Link>
+              <Link to="/logout" className="button button-primary link-button">
+                <span>S'inscrire</span>
+              </Link>
+            </>
+          )}
         </div>
 
         <nav className="categories-navigation">
