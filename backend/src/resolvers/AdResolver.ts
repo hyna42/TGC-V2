@@ -1,11 +1,12 @@
 import { FindManyOptions, ILike, In } from "typeorm";
 import { Ad } from "../entities/Ad";
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import AdInput from "../inputs/AdInput";
 import { Category } from "../entities/Category";
 import { Tag } from "../entities/Tag";
 import { Picture } from "../entities/Picture";
 import UpdateAdInput from "../inputs/UpdateAdInput";
+import { User } from "../entities/User";
 
 @Resolver(Ad)
 class AdResolver {
@@ -41,24 +42,30 @@ class AdResolver {
     return ads;
   }
 
-  //get ad by category
+  //get ad by id
   @Query(() => Ad)
   async getAdById(@Arg("id") id: number) {
     return await Ad.findOne({ where: { id: id } });
   }
 
   //delete ad
+  @Authorized()
   @Mutation(() => String)
-  async deleteAd(@Arg("id") id: number) {
+  async deleteAd(@Arg("id") id: number, @Ctx() context: any) {
     const adToDelete = await Ad.findOne({ where: { id } });
+
+    //verifier que la personne qui essaye de supprimer l'annonce en est bien l'auteur
+    if (context.email !== adToDelete?.user.email)
+      throw new Error("Action non autorisée");
 
     await adToDelete?.remove();
     return "Ad successfully deleted!";
   }
 
   //create new ad
+  @Authorized()
   @Mutation(() => String)
-  async createNewAd(@Arg("data") data: AdInput) {
+  async createNewAd(@Arg("data") data: AdInput, @Ctx() context: any) {
     // Gestion de la relation Category
     let category: Category | undefined = undefined;
     if (data.categoryId) {
@@ -84,19 +91,25 @@ class AdResolver {
       });
     }
 
+    //gestion de la relation user (auteur de l'annonce)
+    const user = await User.findOneBy({ email: context.email });
+    if (!user) throw new Error("Utilisateur introuvable");
+
     const adToSave = Ad.create({
       ...data,
       category,
       pictures,
       tags,
+      user,
     });
     await adToSave.save();
     return `Ad successfully created!`;
   }
 
   //update ad
+  @Authorized()
   @Mutation(() => String)
-  async updateAd(@Arg("data") updateData: UpdateAdInput) {
+  async updateAd(@Arg("data") updateData: UpdateAdInput, @Ctx() context: any) {
     // Retrieve the ad along with its relations
     let adToUpdate = await Ad.findOne({
       where: { id: updateData.id },
@@ -107,11 +120,13 @@ class AdResolver {
       throw new Error("Ad not found");
     }
 
+    if (context.email !== adToUpdate?.user.email)
+      throw new Error("Action non autorisée");
+
     // Update basic fields using Object.assign
     Object.assign(adToUpdate, {
       title: updateData.title,
       description: updateData.description,
-      owner: updateData.owner,
       price: updateData.price,
       location: updateData.location,
       createdAt: updateData.createdAt,

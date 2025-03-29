@@ -12,9 +12,6 @@ class UpdateAdInput {
   description?: string;
 
   @Field({ nullable: true })
-  owner?: string;
-
-  @Field({ nullable: true })
   price?: number;
 
   @Field({ nullable: true })

@@ -13,6 +13,7 @@ import {
 } from "../generated/graphql-types";
 import { GET_ALL_ADS } from "../graphql/queries";
 import { useState } from "react";
+import { useIsLoggedIn } from "../utils/user";
 
 export type Category = {
   id: number;
@@ -38,11 +39,10 @@ export type FormPayload = {
 
 const NewAddFormPage = () => {
   const navigate = useNavigate();
-
   const { data: getAllCategoriesAndTags } = useGetAllCategoriesAndTagsQuery();
-
   const [createNewAd] = useCreateNewAdMutation();
 
+  const authorName = useIsLoggedIn().name || "";
   // ✅ État pour stocker les URL de prévisualisation
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 
@@ -61,7 +61,7 @@ const NewAddFormPage = () => {
             Voluptates repudiandae asperiores quia. Blanditiis repellat minima
             adipisci, aliquam nulla unde quam architecto eligendi, voluptatum,
             perspiciatis laudantium sed eos voluptates?`,
-      owner: "auteur",
+      // owner: "auteur",
       price: 100,
       location: "Paris",
       // createdAt: "1992-04-24",
@@ -83,7 +83,7 @@ const NewAddFormPage = () => {
     const dataPayload = {
       title: formData.title,
       description: formData.description,
-      owner: formData.owner,
+      owner: authorName,
       price: Number(formData.price),
       location: formData.location,
       tagIds: formData.tags.map((tag) => parseInt(tag.toString(), 10)),
@@ -166,7 +166,12 @@ const NewAddFormPage = () => {
         {/*Auteur */}
         <div className="form-group">
           <label>Auteur</label>
-          <input {...register("owner")} className="text-field" />
+          <input
+            {...register("owner")}
+            className="text-field"
+            value={authorName}
+            disabled
+          />
           {errors.owner && (
             <span className="error-message">{errors.owner.message}</span>
           )}

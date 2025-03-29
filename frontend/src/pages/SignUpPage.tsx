@@ -7,7 +7,7 @@ import { gql, useMutation } from "@apollo/client";
 import { signupSchema } from "../validation/signupSchema";
 
 const SIGNUP_MUTATION = gql`
-  mutation Signup($data: UserInput!) {
+  mutation Signup($data: UserSignUpInput!) {
     signup(data: $data)
   }
 `;
@@ -40,10 +40,24 @@ const SignUpPage = () => {
     <div className="page-container">
       <form onSubmit={handleSubmit(onSubmit)} className="form-content">
         <h2>Créer un compte</h2>
-
+        <div className="form-group">
+          <label>Pseudo</label>
+          <input
+            {...register("name")}
+            className="text-field"
+            placeholder="Pseudo"
+          />
+          {errors.name && (
+            <span className="error-message">{errors.name.message}</span>
+          )}
+        </div>
         <div className="form-group">
           <label>Email</label>
-          <input {...register("email")} className="text-field" />
+          <input
+            {...register("email")}
+            className="text-field"
+            placeholder="Email"
+          />
           {errors.email && (
             <span className="error-message">{errors.email.message}</span>
           )}
@@ -55,6 +69,7 @@ const SignUpPage = () => {
             type="password"
             {...register("hashedPassword")}
             className="text-field"
+            placeholder="****************"
           />
           {errors.hashedPassword && (
             <span className="error-message">

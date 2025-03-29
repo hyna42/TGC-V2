@@ -2,7 +2,11 @@ import { MinLength } from "class-validator";
 import { Field, InputType } from "type-graphql";
 
 @InputType()
-class UserInput {
+class UserSignUpInput {
+  @Field()
+  @MinLength(4)
+  name: string;
+
   @Field()
   email: string;
 
@@ -11,9 +15,6 @@ class UserInput {
     message: "le mot de passe doit contenir au moins 8 caractères",
   })
   hashedPassword: string;
-
-  // @Field(() => [Int], { nullable: true })
-  // adIds?: number;
 }
 
-export default UserInput;
+export default UserSignUpInput;

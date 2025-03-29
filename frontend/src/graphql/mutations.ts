@@ -59,13 +59,13 @@ export const UPDATE_TAG = gql`
 
 /* USER mutations */
 export const SIGN_UP = gql`
-  mutation Signup($data: UserInput!) {
+  mutation Signup($data: UserSignUpInput!) {
     signup(data: $data)
   }
 `;
 
 export const LOGIN = gql`
-  mutation Login($data: UserInput!) {
+  mutation Login($data: UserLoginInput!) {
     login(data: $data)
   }
 `;

@@ -15,15 +15,15 @@ const RecentAds = () => {
     try {
       await deleteAd({
         variables: { deleteAdId: id },
-        refetchQueries:[GET_ALL_ADS]
+        refetchQueries: [GET_ALL_ADS],
       });
     } catch (error) {
       console.error("Error deleting ad", error);
     }
   };
 
-    const isAuth = useIsLoggedIn()
-
+  const isAuth = useIsLoggedIn().isLoggedIn;
+  
   console.log("ads", ads);
   return (
     <>
@@ -39,14 +39,16 @@ const RecentAds = () => {
                 price={ad.price}
                 category={ad.category}
               />
-              {isAuth &&<button
-                className="button delete-ad"
-                onClick={() => {
-                  handleDelete(ad.id);
-                }}
-              >
-                Supprimer
-              </button>}
+              {isAuth && (
+                <button
+                  className="button delete-ad"
+                  onClick={() => {
+                    handleDelete(ad.id);
+                  }}
+                >
+                  Supprimer
+                </button>
+              )}
             </div>
           ))}
         </section>

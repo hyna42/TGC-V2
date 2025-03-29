@@ -74,7 +74,6 @@ const UpdateAdPage = () => {
     if (fetchAdDetails) {
       setValue("title", fetchAdDetails.title);
       setValue("description", fetchAdDetails.description);
-      setValue("owner", fetchAdDetails.owner);
       setValue("price", fetchAdDetails.price);
       setValue("location", fetchAdDetails.location);
       setValue("createdAt", fetchAdDetails.createdAt.split("T")[0]);
@@ -178,15 +177,6 @@ const UpdateAdPage = () => {
           />
           {errors.description && (
             <span className="error-message">{errors.description.message}</span>
-          )}
-        </div>
-
-        {/* auteur */}
-        <div className="form-group">
-          <label htmlFor="owner">Auteur</label>
-          <input {...register("owner")} id="owner" className="text-field" />
-          {errors.owner && (
-            <span className="error-message">{errors.owner.message}</span>
           )}
         </div>
 

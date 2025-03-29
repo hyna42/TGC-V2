@@ -13,7 +13,7 @@ import { useIsLoggedIn } from "../utils/user";
 const Header = () => {
   const navigate = useNavigate();
   const [logout] = useLogoutMutation();
-  const isAuth = useIsLoggedIn()
+  const isAuth = useIsLoggedIn().isLoggedIn
 
   //TODO update serarch feat
   const [searchValue, setSearchValue] = useState("");

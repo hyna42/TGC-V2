@@ -8,7 +8,7 @@ const AdDetailsPage = () => {
   const { data } = useGetAdByIdQuery({ variables: { getAdByIdId: parseInt(id as string) } })
   const adDetails = data?.getAdById;
   
-    const isAuth = useIsLoggedIn()
+      const isAuth = useIsLoggedIn().isLoggedIn||false
   
   console.log('adDetails', adDetails)
     if (!adDetails) return <p>Chargement des détails de l'annonce...</p>;
@@ -32,7 +32,7 @@ const AdDetailsPage = () => {
           <div className="ad-details-description">{adDetails.description}</div>
           <hr className="separator" />
           <div className="ad-details-owner">
-            Annoncée publiée par <b>{adDetails.owner}</b> le{" "}
+            Annoncée publiée par <b>{adDetails.user.name}</b> le{" "}
             {new Date(adDetails.createdAt).toLocaleDateString()}.
           </div>
 

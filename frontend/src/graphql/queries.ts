@@ -7,7 +7,6 @@ export const GET_ALL_ADS = gql`
       id
       title
       description
-      owner
       price
       location
       createdAt
@@ -23,6 +22,9 @@ export const GET_ALL_ADS = gql`
         id
         name
       }
+      user {
+        name
+      }
     }
   }
 `;
@@ -33,7 +35,6 @@ export const GET_AD_BY_ID = gql`
       id
       title
       description
-      owner
       price
       location
       createdAt
@@ -47,6 +48,9 @@ export const GET_AD_BY_ID = gql`
       }
       tags {
         id
+        name
+      }
+      user {
         name
       }
     }
@@ -111,6 +115,7 @@ export const IS_LOGGED_IN = gql`
     Me {
       email
       isLoggedIn
+      name
     }
   }
 `;

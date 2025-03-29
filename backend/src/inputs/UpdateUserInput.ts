@@ -1,7 +1,7 @@
 import { Field, InputType } from "type-graphql";
 
 @InputType()
-class UpdateUserInput {
+class UpdateUserSignUpInput {
   @Field()
   email?: string;
 
@@ -12,4 +12,4 @@ class UpdateUserInput {
   // adIds?: number;
 }
 
-export default UpdateUserInput;
+export default UpdateUserSignUpInput;

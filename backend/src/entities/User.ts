@@ -17,6 +17,11 @@ export class User extends BaseEntity {
   id: number;
 
   @Field()
+  @Column()
+  @MinLength(4)
+  name: string;
+
+  @Field()
   @Column({ unique: true })
   email: string;
 
@@ -28,7 +33,7 @@ export class User extends BaseEntity {
   hashedPassword: string;
 
   //Relation OneToMany avec ads
-  @Field(() => [Ad], { nullable: true })
+  @Field(() => [Ad])
   @OneToMany(() => Ad, (ad) => ad.user)
   ads: Ad[];
 }

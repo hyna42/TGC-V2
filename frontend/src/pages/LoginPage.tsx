@@ -21,7 +21,6 @@ const LoginPage = () => {
   });
 
   const onSubmit = (data: { email: string; password: string }) => {
-    console.log(data);
     login({
       variables: { data: { email: data.email, hashedPassword: data.password } },
       onCompleted: () => {
@@ -43,7 +42,11 @@ const LoginPage = () => {
 
         <div className="form-group">
           <label>Email</label>
-          <input {...register("email")} className="text-field" />
+          <input
+            {...register("email")}
+            className="text-field"
+            defaultValue={"test@gmail.com"}
+          />
           {errors.email && (
             <span className="error-message">{errors.email.message}</span>
           )}
@@ -55,6 +58,7 @@ const LoginPage = () => {
             type="password"
             {...register("password")}
             className="text-field"
+            defaultValue={"password1"}
           />
           {errors.password && (
             <span className="error-message">{errors.password.message}</span>

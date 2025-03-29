@@ -25,7 +25,6 @@ export type Ad = {
   description: Scalars['String']['output'];
   id: Scalars['Float']['output'];
   location: Scalars['String']['output'];
-  owner: Scalars['String']['output'];
   pictures?: Maybe<Array<Picture>>;
   price: Scalars['Float']['output'];
   tags?: Maybe<Array<Tag>>;
@@ -103,12 +102,12 @@ export type MutationDeleteTagArgs = {
 
 
 export type MutationLoginArgs = {
-  data: UserInput;
+  data: UserLoginInput;
 };
 
 
 export type MutationSignupArgs = {
-  data: UserInput;
+  data: UserSignUpInput;
 };
 
 
@@ -181,7 +180,6 @@ export type UpdateAdInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['Int']['input'];
   location?: InputMaybe<Scalars['String']['input']>;
-  owner?: InputMaybe<Scalars['String']['input']>;
   pictures?: InputMaybe<Array<Scalars['String']['input']>>;
   price?: InputMaybe<Scalars['Float']['input']>;
   tagIds?: InputMaybe<Array<Scalars['Int']['input']>>;
@@ -200,21 +198,29 @@ export type UpdateTagInput = {
 
 export type User = {
   __typename?: 'User';
-  ads?: Maybe<Array<Ad>>;
+  ads: Array<Ad>;
   email: Scalars['String']['output'];
   hashedPassword: Scalars['String']['output'];
   id: Scalars['Float']['output'];
+  name: Scalars['String']['output'];
 };
 
 export type UserInfos = {
   __typename?: 'UserInfos';
   email?: Maybe<Scalars['String']['output']>;
   isLoggedIn: Scalars['Boolean']['output'];
+  name?: Maybe<Scalars['String']['output']>;
 };
 
-export type UserInput = {
+export type UserLoginInput = {
   email: Scalars['String']['input'];
   hashedPassword: Scalars['String']['input'];
+};
+
+export type UserSignUpInput = {
+  email: Scalars['String']['input'];
+  hashedPassword: Scalars['String']['input'];
+  name: Scalars['String']['input'];
 };
 
 export type DeleteAdMutationVariables = Exact<{
@@ -281,14 +287,14 @@ export type UpdateTagMutationVariables = Exact<{
 export type UpdateTagMutation = { __typename?: 'Mutation', updateTag: string };
 
 export type SignupMutationVariables = Exact<{
-  data: UserInput;
+  data: UserSignUpInput;
 }>;
 
 
 export type SignupMutation = { __typename?: 'Mutation', signup: string };
 
 export type LoginMutationVariables = Exact<{
-  data: UserInput;
+  data: UserLoginInput;
 }>;
 
 
@@ -302,14 +308,14 @@ export type LogoutMutation = { __typename?: 'Mutation', logout: string };
 export type GetAllAdsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllAdsQuery = { __typename?: 'Query', getAllAds: Array<{ __typename?: 'Ad', id: number, title: string, description: string, owner: string, price: number, location: string, createdAt: any, pictures?: Array<{ __typename?: 'Picture', id: number, url: string }> | null, category: { __typename?: 'Category', id: number, title: string }, tags?: Array<{ __typename?: 'Tag', id: number, name: string }> | null }> };
+export type GetAllAdsQuery = { __typename?: 'Query', getAllAds: Array<{ __typename?: 'Ad', id: number, title: string, description: string, price: number, location: string, createdAt: any, pictures?: Array<{ __typename?: 'Picture', id: number, url: string }> | null, category: { __typename?: 'Category', id: number, title: string }, tags?: Array<{ __typename?: 'Tag', id: number, name: string }> | null, user: { __typename?: 'User', name: string } }> };
 
 export type GetAdByIdQueryVariables = Exact<{
   getAdByIdId: Scalars['Float']['input'];
 }>;
 
 
-export type GetAdByIdQuery = { __typename?: 'Query', getAdById: { __typename?: 'Ad', id: number, title: string, description: string, owner: string, price: number, location: string, createdAt: any, pictures?: Array<{ __typename?: 'Picture', id: number, url: string }> | null, category: { __typename?: 'Category', id: number, title: string }, tags?: Array<{ __typename?: 'Tag', id: number, name: string }> | null } };
+export type GetAdByIdQuery = { __typename?: 'Query', getAdById: { __typename?: 'Ad', id: number, title: string, description: string, price: number, location: string, createdAt: any, pictures?: Array<{ __typename?: 'Picture', id: number, url: string }> | null, category: { __typename?: 'Category', id: number, title: string }, tags?: Array<{ __typename?: 'Tag', id: number, name: string }> | null, user: { __typename?: 'User', name: string } } };
 
 export type GetAllCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -343,7 +349,7 @@ export type GetAllCategoriesAndTagsQuery = { __typename?: 'Query', getAllCategor
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', Me: { __typename?: 'UserInfos', email?: string | null, isLoggedIn: boolean } };
+export type MeQuery = { __typename?: 'Query', Me: { __typename?: 'UserInfos', email?: string | null, isLoggedIn: boolean, name?: string | null } };
 
 
 export const DeleteAdDocument = gql`
@@ -632,7 +638,7 @@ export type UpdateTagMutationHookResult = ReturnType<typeof useUpdateTagMutation
 export type UpdateTagMutationResult = Apollo.MutationResult<UpdateTagMutation>;
 export type UpdateTagMutationOptions = Apollo.BaseMutationOptions<UpdateTagMutation, UpdateTagMutationVariables>;
 export const SignupDocument = gql`
-    mutation Signup($data: UserInput!) {
+    mutation Signup($data: UserSignUpInput!) {
   signup(data: $data)
 }
     `;
@@ -663,7 +669,7 @@ export type SignupMutationHookResult = ReturnType<typeof useSignupMutation>;
 export type SignupMutationResult = Apollo.MutationResult<SignupMutation>;
 export type SignupMutationOptions = Apollo.BaseMutationOptions<SignupMutation, SignupMutationVariables>;
 export const LoginDocument = gql`
-    mutation Login($data: UserInput!) {
+    mutation Login($data: UserLoginInput!) {
   login(data: $data)
 }
     `;
@@ -729,7 +735,6 @@ export const GetAllAdsDocument = gql`
     id
     title
     description
-    owner
     price
     location
     createdAt
@@ -743,6 +748,9 @@ export const GetAllAdsDocument = gql`
     }
     tags {
       id
+      name
+    }
+    user {
       name
     }
   }
@@ -786,7 +794,6 @@ export const GetAdByIdDocument = gql`
     id
     title
     description
-    owner
     price
     location
     createdAt
@@ -800,6 +807,9 @@ export const GetAdByIdDocument = gql`
     }
     tags {
       id
+      name
+    }
+    user {
       name
     }
   }
@@ -1049,6 +1059,7 @@ export const MeDocument = gql`
   Me {
     email
     isLoggedIn
+    name
   }
 }
     `;

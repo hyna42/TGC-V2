@@ -8,15 +8,19 @@ import {
   Resolver,
 } from "type-graphql";
 import { User } from "../entities/User";
-import UserInput from "../inputs/UserInput";
 import * as argon2 from "argon2";
 import "dotenv/config";
 import jwt, { Secret } from "jsonwebtoken";
+import UserLoginInput from "../inputs/UserLoginInput";
+import UserSignUpInput from "../inputs/UserSignUpInput";
 
 @ObjectType()
 class UserInfos {
   @Field({ nullable: true })
   email?: string;
+
+  @Field({ nullable: true })
+  name?: string;
 
   @Field()
   isLoggedIn: boolean;
@@ -26,10 +30,11 @@ class UserInfos {
 class UserResolver {
   //inscription : signup
   @Mutation(() => String)
-  async signup(@Arg("data") data: UserInput) {
+  async signup(@Arg("data") data: UserSignUpInput) {
     const password = await argon2.hash(data.hashedPassword);
 
     const newUser = User.create({
+      name: data.name,
       email: data.email,
       hashedPassword: password,
     });
@@ -39,7 +44,7 @@ class UserResolver {
 
   //connexion : login
   @Mutation(() => String)
-  async login(@Arg("data") data: UserInput, @Ctx() context: any) {
+  async login(@Arg("data") data: UserLoginInput, @Ctx() context: any) {
     const user = await User.findOneBy({ email: data.email });
     if (!user) throw new Error("Identifiants invalides");
     const isPasswordCorrect = await argon2.verify(
@@ -77,8 +82,8 @@ class UserResolver {
   @Query(() => UserInfos)
   async Me(@Ctx() context: any) {
     if (context.email) {
-      console.log("context.email", context.email);
-      return { isLoggedIn: true, email: context.email };
+      const user = await User.findOneByOrFail({ email: context.email });
+      return { isLoggedIn: true, email: context.email, name: user.name };
     } else {
       return { isLoggedIn: false };
     }
@@ -94,7 +99,7 @@ class UserResolver {
 
   //update User
   // @Mutation(() => String)
-  // async updateUser(@Arg("data") data: UpdateUserInput) {
+  // async updateUser(@Arg("data") data: UpdateUserSignUpInput) {
   //   const UserToUpdate = await User.findOneBy({ id: data.id });
 
   //   if (UserToUpdate) {
