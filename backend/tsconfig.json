@@ -22,7 +22,7 @@
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "baseUrl": ".",
-    "types": ["node", "express"]
+    "types": ["node", "express", "jest"]
   },
   "exclude": ["node_modules"],
   "include": ["./src/**/*.ts"]
