@@ -1,5 +1,5 @@
 import AdResolver from "../resolvers/AdResolver";
-import { Ad } from "src/entities/Ad";
+import { Ad } from "../entities/Ad";
 
 // Setup du resolver
 const resolver = new AdResolver();
