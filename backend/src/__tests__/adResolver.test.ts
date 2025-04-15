@@ -6,7 +6,7 @@ const resolver = new AdResolver();
 
 describe("adResolver", () => {
   describe("updateAd", () => {
-    it.only("should allow the author to update their ad", async () => {
+    it("should allow the author to update their ad", async () => {
       //1. fausse annonce existante avec un auteur
       const fakeAd = {
         id: 1,
@@ -34,9 +34,10 @@ describe("adResolver", () => {
       expect(fakeAd.save).toHaveBeenCalled();
 
       expect(result).toBe("Ad 1 has been updated");
+      // console.log("Résultat de updateAd:", result);
     });
 
-    it("should throw if another user tries to update the ad", async () => {});
+    it("should throw if another user tries to update the ad", async () => { });
   });
 });
 
