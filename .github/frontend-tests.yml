@@ -1,6 +1,8 @@
 name: frontend-tests-workflow
 
-on: push
+on:
+  push:
+    branches: [staging]
 
 jobs:
   test-client:
