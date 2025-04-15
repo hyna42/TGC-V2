@@ -1,5 +1,4 @@
 name: backend-tests-workflow
-
 on: pull_request
 jobs:
   test-server:
