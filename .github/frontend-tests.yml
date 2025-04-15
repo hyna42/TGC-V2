@@ -1,5 +1,5 @@
 name: frontend-tests-workflow
-on: pull_request
+on: push
 jobs:
   test-client:
     runs-on: ubuntu-latest
