@@ -37,3 +37,5 @@ jobs:
           push: true
           context: "{{defaultContext}}:frontend"
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/app-tgc-v2-frontend:latest
+
+#hellotest
