@@ -3,10 +3,8 @@ name: full-ci-workflow
 on:
   push:
     branches:
-      - "**"
-  pull_request:
-    branches:
       - staging
+      - develop
 
 jobs:
   test-client:
