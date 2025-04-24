@@ -3,10 +3,8 @@ name: full-ci-workflow
 on:
   push:
     branches:
-      - "**"
-  pull_request:
-    branches:
       - staging
+      - develop
 
 jobs:
   test-client:
@@ -36,7 +34,7 @@ jobs:
         with:
           push: true
           # context: "{{defaultContext}}:frontend"
-          context: ./frontend
+          context: frontend
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/app-tgc-v2-frontend:latest
   test-server:
     runs-on: ubuntu-latest
@@ -65,5 +63,5 @@ jobs:
         with:
           push: true
           # context: "{{defaultContext}}:backend"
-          context: ./backend
+          context: backend
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/app-tgc-v2-backend:latest
