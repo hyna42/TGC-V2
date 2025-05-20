@@ -40,8 +40,8 @@ jobs:
           push: true
           context: frontend
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/{{ secrets.DOCKERHUB_FRONTEND_IMAGE_NAME }:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/{{ secrets.DOCKERHUB_FRONTEND_IMAGE_NAME }}:${{ env.SHORT_SHA }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_FRONTEND_IMAGE_NAME }:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_FRONTEND_IMAGE_NAME }}:${{ env.SHORT_SHA }}
 
   run-tests-server:
     runs-on: ubuntu-latest
@@ -71,5 +71,5 @@ jobs:
           push: true
           context: backend
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/{{ secrets.DOCKERHUB_BACKEND_IMAGE_NAME }:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/{{ secrets.DOCKERHUB_BACKEND_IMAGE_NAME }}:{{ env.SHORT_SHA }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_BACKEND_IMAGE_NAME }:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_BACKEND_IMAGE_NAME }}:${{ env.SHORT_SHA }}
