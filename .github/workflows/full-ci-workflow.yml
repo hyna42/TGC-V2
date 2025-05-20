@@ -7,7 +7,7 @@ on:
       - develop
 
 jobs:
-  run-tests-client:
+  run-tests-frontend:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -15,7 +15,7 @@ jobs:
       - name: Goto client and run tests
         run: cd frontend && npm i && npm test
   build-and-push-client:
-    needs: run-tests-client
+    needs: run-tests-frontend
     if: github.ref == 'refs/heads/staging'
     runs-on: ubuntu-latest
     steps:
@@ -43,7 +43,7 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_FRONTEND_IMAGE_NAME }}:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_FRONTEND_IMAGE_NAME }}:${{ env.SHORT_SHA }}
 
-  run-tests-server:
+  run-tests-backend:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -51,11 +51,16 @@ jobs:
       - name: Goto server and run tests
         run: cd backend && npm i && npm test
   build-and-push-server:
-    needs: run-tests-server
+    needs: run-tests-backend
     if: github.ref == 'refs/heads/staging'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
+      - name: Get short commit SHA
+        id: vars
+        run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
