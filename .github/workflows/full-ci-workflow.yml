@@ -15,7 +15,7 @@ jobs:
       - name: Goto client and run tests
         run: cd frontend && npm i && npm test
   build-and-push-client:
-    needs: test-client
+    needs: run-tests-client
     if: github.ref == 'refs/heads/staging'
     runs-on: ubuntu-latest
     steps:
@@ -51,7 +51,7 @@ jobs:
       - name: Goto server and run tests
         run: cd backend && npm i && npm test
   build-and-push-server:
-    needs: test-server
+    needs: run-tests-server
     if: github.ref == 'refs/heads/staging'
     runs-on: ubuntu-latest
     steps:
