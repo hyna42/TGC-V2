@@ -21,6 +21,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
+      - name: Get short commit SHA
+        id: vars
+        run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -36,7 +41,10 @@ jobs:
           push: true
           # context: "{{defaultContext}}:frontend"
           context: frontend
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/app-tgc-v2-frontend:latest
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/{{ secrets.DOCKERHUB_FRONTEND_IMAGE_NAME }}:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/{{ secrets.DOCKERHUB_FRONTEND_IMAGE_NAME }}:${{ env.SHORT_SHA }}
+
   test-server:
     runs-on: ubuntu-latest
     steps:
@@ -66,4 +74,6 @@ jobs:
           push: true
           # context: "{{defaultContext}}:backend"
           context: backend
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/app-tgc-v2-backend:latest
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/{{ secrets.DOCKERHUB_BACKEND_IMAGE_NAME }}:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/{{ secrets.DOCKERHUB_BACKEND_IMAGE_NAME }}:{{ env.SHORT_SHA }}
