@@ -70,6 +70,6 @@ services:
       img:
         condition: service_healthy
     ports:
-      - 80:80
+      - 7000:80
 volumes:
   postgres_data:
