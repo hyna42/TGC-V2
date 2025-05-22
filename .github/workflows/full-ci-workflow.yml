@@ -78,7 +78,7 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_BACKEND_IMAGE_NAME }}:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_BACKEND_IMAGE_NAME }}:${{ env.SHORT_SHA }}
-  
+
   run-tests-img:
     runs-on: ubuntu-latest
     steps:
@@ -88,7 +88,7 @@ jobs:
         run: cd img && npm i && npm test
 
   build-and-push-img:
-    needs: [run-tests-img]
+    needs: run-tests-img
     if: github.ref == 'refs/heads/staging'
     runs-on: ubuntu-latest
     steps:
@@ -114,5 +114,5 @@ jobs:
           push: true
           context: img
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMG_IMAGE_NAME }}:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMG_IMAGE_NAME }}:${{ env.SHORT_SHA }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMG }}:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMG }}:${{ env.SHORT_SHA }}
