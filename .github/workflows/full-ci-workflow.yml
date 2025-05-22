@@ -12,9 +12,9 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
-      - name: Goto client and run tests
+      - name: Run tests (frontend)
         run: cd frontend && npm i && npm test
-  build-and-push-client:
+  build-and-push-frontend:
     needs: run-tests-frontend
     if: github.ref == 'refs/heads/staging'
     runs-on: ubuntu-latest
@@ -34,7 +34,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Build and push frontend image to DockerHub
+      - name: Build & push (frontend)
         uses: docker/build-push-action@v4
         with:
           push: true
@@ -48,9 +48,9 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
-      - name: Goto server and run tests
+      - name: Run tests (backend)
         run: cd backend && npm i && npm test
-  build-and-push-server:
+  build-and-push-backend:
     needs: run-tests-backend
     if: github.ref == 'refs/heads/staging'
     runs-on: ubuntu-latest
@@ -70,7 +70,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Build and push backend image to DockerHub
+      - name: Build & push (backend)
         uses: docker/build-push-action@v4
         with:
           push: true
@@ -78,3 +78,41 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_BACKEND_IMAGE_NAME }}:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_BACKEND_IMAGE_NAME }}:${{ env.SHORT_SHA }}
+  
+  run-tests-img:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Run tests (img)
+        run: cd img && npm i && npm test
+
+  build-and-push-img:
+    needs: [run-tests-img]
+    if: github.ref == 'refs/heads/staging'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Get short commit SHA
+        id: vars
+        run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build & push (img)
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          context: img
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMG_IMAGE_NAME }}:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMG_IMAGE_NAME }}:${{ env.SHORT_SHA }}
