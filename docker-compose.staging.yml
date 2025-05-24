@@ -55,7 +55,7 @@ services:
       retries: 100
     volumes:
       - ./img/uploads:/app/uploads
-      - ./img/clean.ts:/app/clean.ts
+      # - ./img/clean.ts:/app/clean.ts
     env_file:
       - .env
   api_gateway:
