@@ -116,3 +116,11 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMG }}:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMG }}:${{ env.SHORT_SHA }}
+  deploy-staging:
+    needs: [build-and-push-frontend, build-and-push-backend, build-and-push-img]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/staging'
+    steps:
+      - name: Send webhook
+        run: | 
+          curl -X POST https://ops.hyna.me/hooks/${{ secrets.WEBHOOK_ID }}
