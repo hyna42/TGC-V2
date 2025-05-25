@@ -32,6 +32,8 @@ services:
       - postgres_data:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USER} 
+      POSTGRES_DB: ${DB_NAME}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d postgres -U postgres"]
       interval: 1s
@@ -50,7 +52,7 @@ services:
       timeout: 2s
       retries: 100
     volumes:
-      - ./img/uploads:/app/uploads
+      - uploads:/app/uploads
     env_file:
       - .env
   api_gateway:
@@ -69,3 +71,5 @@ services:
 volumes:
   postgres_data:
     name: staging_postgres_data
+  uploads:
+    name: staging_uploads
