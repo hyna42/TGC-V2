@@ -18,6 +18,8 @@ COPY clean.ts clean.ts
 COPY crontab /etc/crontabs/root
 COPY start.sh /app/start.sh
 
+COPY uploads /app/uploads_seed 
+
 # Rendre le script exécutable
 RUN chmod +x /app/start.sh
 
