@@ -14,6 +14,7 @@ import {
 import { GET_ALL_ADS } from "../graphql/queries";
 import { useState } from "react";
 import { useIsLoggedIn } from "../utils/user";
+import { API_URL } from "../utils/config";
 
 export type Category = {
   id: number;
@@ -132,10 +133,11 @@ const NewAddFormPage = () => {
     formData.append("file", file);
 
     try {
-      const response = await axios.post("/img", formData);
+      const response = await axios.post(`${API_URL}/img`, formData);
       if (!response.data.filename) return;
       // Mettre à jour le champ correspondant dans le formulaire
       console.log("filename ==>", response.data.filename);
+      console.log("API_URL ==>", API_URL);
       setValue(`pictures.${index}.url`, response.data.filename);
     } catch (error) {
       console.error("Erreur lors de l'upload de l'image", error);
