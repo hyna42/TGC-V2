@@ -1,8 +1,6 @@
 services:
   backend:
     image: hyna42/app-tgc-v2-backend
-    # volumes:
-    #   - ./backend/src:/app/src
     environment:
       - CHOKIDAR_USEPOLLING=true
     env_file:
@@ -17,8 +15,6 @@ services:
       retries: 100
   frontend:
     image: hyna42/app-tgc-v2-frontend
-    # volumes:
-    #   - ./frontend/src:/app/src
     environment:
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
@@ -33,7 +29,7 @@ services:
   db:
     image: postgres
     volumes:
-      - postgres_data:/var/lib/postgresql/data 
+      - postgres_data:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     healthcheck:
@@ -55,7 +51,6 @@ services:
       retries: 100
     volumes:
       - ./img/uploads:/app/uploads
-      # - ./img/clean.ts:/app/clean.ts
     env_file:
       - .env
   api_gateway:
