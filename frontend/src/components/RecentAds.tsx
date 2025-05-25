@@ -28,7 +28,7 @@ const RecentAds = () => {
   return (
     <>
       <main className="main-content">
-        <h2>Annonces récentes</h2>
+        <h2>Annonces récentes : Test Deploy DB</h2>
         <section className="recent-ads">
           {ads.map((ad) => (
             <div key={ad.id}>
