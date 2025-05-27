@@ -52,7 +52,7 @@ services:
       timeout: 2s
       retries: 100
     volumes:
-      - uploads:/app/uploads
+      # - uploads:/app/uploads
     env_file:
       - .env
   api_gateway:
@@ -71,5 +71,5 @@ services:
 volumes:
   postgres_data:
     name: staging_postgres_data
-  uploads:
-    name: staging_uploads
+  # uploads:
+  #   name: staging_uploads
