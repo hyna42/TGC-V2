@@ -39,6 +39,7 @@ export type FormPayload = {
 };
 
 const NewAddFormPage = () => {
+  console.log("API_URL ==>", API_URL);
   const navigate = useNavigate();
   const { data: getAllCategoriesAndTags } = useGetAllCategoriesAndTagsQuery();
   const [createNewAd] = useCreateNewAdMutation();
