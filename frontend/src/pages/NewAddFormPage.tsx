@@ -172,7 +172,7 @@ const NewAddFormPage = () => {
             {...register("owner")}
             className="text-field"
             value={authorName}
-            disabled
+            // disabled
           />
           {errors.owner && (
             <span className="error-message">{errors.owner.message}</span>
