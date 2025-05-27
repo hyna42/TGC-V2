@@ -1,26 +1,18 @@
-FROM node:lts-alpine
-
-RUN apk add --no-cache curl
+# Étape 1 : Build du projet React
+FROM node:lts-alpine as builder
 
 WORKDIR /app
 
-# Copie des fichiers de configuration et de dépendances
 COPY package.json package-lock.json ./
 RUN npm install
 
-# Copie des fichiers de l'application
-COPY public public
-COPY src src
+COPY . .
+RUN npm run build
 
-COPY codegen.ts codegen.ts
+# Étape 2 : Nginx pour servir le build
+FROM nginx:alpine
 
-COPY index.html index.html
+COPY --from=builder /app/build /usr/share/nginx/html
 
-COPY tsconfig.app.json tsconfig.app.json
-COPY tsconfig.json tsconfig.json
-COPY tsconfig.node.json tsconfig.node.json
-
-COPY vite.config.ts vite.config.ts
-
-# Commande à exécuter pour démarrer le frontend
-CMD ["npm", "run", "start"]
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
