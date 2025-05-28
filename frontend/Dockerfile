@@ -1,18 +1,26 @@
-# Étape 1 : Build du frontend (Vite)
-FROM node:lts-alpine AS builder
+FROM node:lts-alpine
+
+RUN apk add --no-cache curl
 
 WORKDIR /app
 
+# Copie des fichiers de configuration et de dépendances
 COPY package.json package-lock.json ./
 RUN npm install
 
-COPY . .
-RUN npm run build
+# Copie des fichiers de l'application
+COPY public public
+COPY src src
 
-# Étape 2 : Nginx pour servir le build
-FROM nginx:alpine
+COPY codegen.ts codegen.ts
 
-COPY --from=builder /app/dist /usr/share/nginx/html
+COPY index.html index.html
 
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+COPY tsconfig.app.json tsconfig.app.json
+COPY tsconfig.json tsconfig.json
+COPY tsconfig.node.json tsconfig.node.json
+
+COPY vite.config.ts vite.config.ts
+
+# Commande à exécuter pour démarrer le frontend
+CMD ["npm", "run", "start"]
