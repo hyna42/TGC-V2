@@ -4,9 +4,6 @@ RUN apk --no-cache add curl dcron
 
 WORKDIR /app
 
-# Préparer dossier uploads directement depuis l'image
-RUN mkdir -p uploads
-
 # Copier package et installer dépendances
 COPY package.json package-lock.json ./
 RUN npm install
