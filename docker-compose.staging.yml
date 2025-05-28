@@ -49,7 +49,7 @@ services:
       timeout: 2s
       retries: 100
     volumes:
-    - ./img/uploads:/app/uploads
+    - uploads:/app/uploads
     env_file:
       - .env
   api_gateway:
