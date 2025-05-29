@@ -23,7 +23,7 @@ const RecentAds = () => {
   };
 
   const isAuth = useIsLoggedIn().isLoggedIn;
-  
+
   console.log("ads", ads);
   return (
     <>

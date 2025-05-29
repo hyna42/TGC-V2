@@ -48,6 +48,7 @@ import "dotenv/config";
         let count = 0;
         files.forEach(function (file) {
           if (!dbUrls.includes(file)) {
+            console.log(`❌ ${file} - sera supprimé`);
             count++;
             fs.unlink(
               `${directoryPath}/${file}`,
