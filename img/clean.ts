@@ -30,6 +30,12 @@ import "dotenv/config";
     const dbUrls = response.rows.map((item) => item.url.slice(5));
     // console.log("dbURLs", dbUrls);
 
+    if (!dbUrls.length) {
+      console.log("La DB est vide ou indisponible, skip du nettoyage.");
+      process.exit(0);
+    }
+
+
     //2 liste des urls dans le dossier uploads du service img
     fs.readdir(
       directoryPath,
@@ -54,7 +60,7 @@ import "dotenv/config";
             );
           }
         });
-        if(count)console.log(`❌ ${count} unused files sucessfully removed from /uploads.🗑️🗑️🗑️`);
+        if (count) console.log(`❌ ${count} unused files sucessfully removed from /uploads.🗑️🗑️🗑️`);
       }
     );
   } catch (err) {

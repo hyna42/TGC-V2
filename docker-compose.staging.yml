@@ -51,11 +51,13 @@ services:
       interval: 1s
       timeout: 2s
       retries: 100
-    # volumes:
-    #   - ./img/uploads:/app/uploads
-      # - ./img2/clean.ts:/app/clean.ts
     env_file:
       - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
   api_gateway:
     image: nginx
     volumes:
