@@ -58,6 +58,8 @@ services:
         condition: service_healthy
       backend:
         condition: service_healthy
+    volumes:
+      - /apps/tgc-v2/staging/img/uploads:/app/uploads
   api_gateway:
     image: nginx
     volumes:
