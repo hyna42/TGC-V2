@@ -124,3 +124,6 @@ jobs:
       - name: Send webhook
         run: | 
           curl -X POST https://ops.hyna.me/hooks/${{ secrets.WEBHOOK_ID }}
+
+
+# TODO : tag sur main pour mettre en recette
