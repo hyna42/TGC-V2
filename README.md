@@ -1,125 +1,88 @@
-🏠 The Good Corner V2
-The Good Corner V2 est une plateforme web de petites annonces, inspirée de Leboncoin.
-Les utilisateurs peuvent consulter, publier et gérer des annonces dans différentes catégories (automobile, maison & meubles, tech...).
+# The Good Corner V2
 
-🔗 Démo en ligne : stg.the-good-corner.hyna.me
+![Node.js](https://img.shields.io/badge/Node.js-18.x-green)
+![React](https://img.shields.io/badge/React-18-blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-4.x-blue)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow)
 
-🚀 Stack technique
-Frontend	Backend	Services	Base de données	DevOps
-React	Node.js (GraphQL)	Nginx (API Gateway)	PostgreSQL	Docker, Docker Compose
-Vite	Apollo Server	Service d'images	Adminer	Healthchecks, volumes persistants
+## Short Description
 
-🛠️ Architecture
-scss
-Copier
-Modifier
-The Good Corner V2
-├── frontend (Vite, React)
-├── backend (GraphQL API, Node.js)
-├── img (service de gestion d'images)
-├── nginx (API Gateway)
-├── db (PostgreSQL)
-└── adminer (interface DB)
-📦 Lancer le projet
-🔧 Prérequis
-Docker + Docker Compose
+The Good Corner V2 is a full-stack classifieds application inspired by platforms like LeBonCoin. Users can browse, search, and manage ads with a responsive interface, secure authentication, and image upload support.
 
-Fichier .env avec :
+## Live Demo
 
-bash
-Copier
-Modifier
-DB_USER=...
-DB_PASSWORD=...
-DB_NAME=...
-GATEWAY_PORT=...
-🚀 Commandes
-1️⃣ Cloner le repo :
+[https://stg.the-good-corner.hyna.me](https://stg.the-good-corner.hyna.me)
 
-bash
-Copier
-Modifier
-git clone https://github.com/hyna42/TGC-V2
-cd TGC-V2
-2️⃣ Lancer avec Docker Compose :
+## Key Features
 
-bash
-Copier
-Modifier
-docker-compose up --build
-3️⃣ Accéder à l'app :
+- **Authentication** with JWT tokens stored in cookies for session management.
+- **Ads CRUD**: create, read, update, and delete ads with categories, tags, and pictures.
+- **Search & Filters**: filter ads by title, category, or tag.
+- **Responsive UI** built with React and CSS media queries.
+- **Image Upload** microservice handling file validation and storage.
+- **CI/CD** pipeline with automated tests and Docker image publishing.
+- **Testing** with unit tests and end-to-end Playwright tests.
 
-Frontend : http://localhost:5173
+## Tech Stack
 
-Backend (GraphQL Playground) : http://localhost:4000
+- **Frontend**: React 18, Vite, Apollo Client, React Router, React Hook Form, Yup
+- **Backend**: Node.js, TypeScript, Apollo Server, TypeGraphQL, TypeORM, argon2, JWT
+- **Image Service**: Express, Multer
+- **Database**: PostgreSQL
+- **DevOps**: Docker, Docker Compose, Nginx, GitHub Actions
+- **Testing**: Jest, Vitest, Playwright
 
-Adminer : http://localhost:8080
+## Architecture Overview
 
-📂 Services
-Service	Port local	Description
-Frontend	5173	Application web React
-Backend	4000	API GraphQL (Node.js, Apollo)
-Images	4000 (shared)	Upload et gestion des images
-Adminer	8080	Interface pour PostgreSQL
-PostgreSQL	5432 (interne)	Base de données
-Nginx	${GATEWAY_PORT}	API Gateway (reverse proxy)
+The project uses a containerized microservice architecture:
 
-📷 Fonctionnalités
-✅ Parcourir et rechercher des annonces
-✅ Filtrer par catégories
-✅ Télécharger des images pour les annonces
-✅ Backend en GraphQL
-✅ Déploiement orchestré avec Docker
-✅ Healthchecks intégrés
+- **Backend**: GraphQL API built with Apollo Server and TypeGraphQL, communicating with PostgreSQL via TypeORM.
+- **Frontend**: React single-page application served by Vite.
+- **Image Service**: Express service for uploading and serving images.
+- **Nginx Gateway**: Routes requests to frontend, backend, and image services.
+- **PostgreSQL**: Stores users, ads, categories, tags, and pictures.
 
-📬 Contact
-👤 Amadou Diallo
-🔗 GitHub | LinkedIn | 📧 hyna@duck.com
+Services are orchestrated through Docker Compose with health checks.
 
-Dis-moi si tu veux que je t’aide à intégrer ce README directement dans ton projet ! 💪
-Je peux aussi t’aider à customiser le design du site si tu veux un style plus cool 🎨.
+## Installation
 
+1. **Clone the repository**
 
+   ```bash
+   git clone git@github.com:hyna42/TGC-V2.git
+   cd TGC-V2
+   ```
 
+2. **Set up environment variables**
 
+   ```bash
+   cp .env.exemple .env
+   # Edit .env and update the values as needed
+   ```
 
+3. **Run with Docker Compose**
+   ```bash
+   docker compose up --build
+   ```
+   The app will be available through the Nginx gateway.
 
+### Running locally without Docker
 
-Vous avez dit :
-en mode markdown a coller direct sur mo,n reame
+Install dependencies and start each service:
 
+```bash
+cd backend && npm install && npm start
+cd frontend && npm install && npm start
+cd img && npm install && npm start
+```
 
-ChatGPT a dit :
-Bien sûr ! Voici le code markdown complet, prêt à être collé directement dans ton README :
+## Testing Instructions
 
-markdown
-Copier
-Modifier
-## 🏠 The Good Corner V2
+- **Backend**: `cd backend && npm test`
+- **Frontend**: `cd frontend && npm test`
+- **Image Service**: `cd img && npm test`
+- **End-to-end**: `cd e2e && npx playwright test`
 
-**The Good Corner V2** est une plateforme web de petites annonces, inspirée de *Leboncoin*.  
-Les utilisateurs peuvent consulter, publier et gérer des annonces dans différentes catégories (automobile, maison & meubles, tech...).
+## License
 
-🔗 **Démo en ligne** : [stg.the-good-corner.hyna.me](https://stg.the-good-corner.hyna.me)
-
----
-
-## 🚀 Stack technique
-
-| **Frontend** | **Backend** | **Services** | **Base de données** | **DevOps** |
-|--------------|-------------|--------------|---------------------|------------|
-| React        | Node.js (GraphQL) | Nginx (API Gateway) | PostgreSQL | Docker, Docker Compose |
-| Vite         | Apollo Server    | Service d'images     | Adminer    | Healthchecks, volumes persistants |
-
----
-
-## 🛠️ Architecture
-
-
-
-
-
-
-
-
-
+This project is licensed under the MIT License.
