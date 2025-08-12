@@ -12,6 +12,7 @@ The Good Corner V2 is a full-stack classifieds application inspired by platforms
 ## Live Demo
 
 [https://stg.the-good-corner.hyna.me](https://stg.the-good-corner.hyna.me)
+![alt text](pictures/image.png)
 
 ## Key Features
 
